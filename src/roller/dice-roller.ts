@@ -2,7 +2,7 @@ import { DiceExpression, RollResult, DieRoll } from '../types.js';
 import { randomInt } from 'crypto';
 
 export class DiceRoller {
-  roll(expression: DiceExpression): RollResult {
+  roll(notation: string, expression: DiceExpression): RollResult {
     let total = expression.modifier;
     const allRolls: DieRoll[] = [];
     let breakdown = '';
@@ -14,6 +14,9 @@ export class DiceRoller {
 
       for (let i = 0; i < count; i++) {
         let roll = randomInt(1, term.size + 1);
+        if (term.size === 1 && term.count === 1) { // Fudge dice
+          roll = roll === 1 ? -1 : (roll === 2 ? 0 : 1);
+        }
         const die: DieRoll = { size: term.size, result: roll };
 
         // Reroll mechanic: if the die shows a value in the reroll list, reroll it once
@@ -112,7 +115,8 @@ export class DiceRoller {
     }
 
     return {
-      notation: 'temp_notation', // will be replaced in the server
+      
+      notation,
       total,
       rolls: allRolls,
       timestamp: new Date().toISOString(),

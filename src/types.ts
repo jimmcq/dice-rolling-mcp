@@ -1,9 +1,4 @@
-export interface DiceSystem {
-  fudge: 'dF';
-  percentile: 'd%';
-  coin: 'd2';
-  fate: '4dF';
-}
+
 
 export interface RollResult {
   notation: string;

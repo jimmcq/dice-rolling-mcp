@@ -65,8 +65,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name === 'dice_roll') {
     const { notation, label, verbose } = request.params.arguments as z.infer<typeof diceRollInputSchema>;
     const expression = parser.parse(notation);
-    const result = roller.roll(expression);
-    result.notation = notation;
+    const result = roller.roll(notation, expression);
     result.label = label;
 
     let text = `You rolled ${notation}`;

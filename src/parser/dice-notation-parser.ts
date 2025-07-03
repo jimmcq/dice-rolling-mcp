@@ -43,7 +43,7 @@ export class DiceNotationParser {
         if (sizeStr === '%') {
           size = 100;
         } else if (sizeStr === 'f') {
-          size = 3; // Fudge dice are handled as d3 for now
+          size = 1; // Fudge dice are handled as d1, with results -1, 0, 1
         } else {
           size = parseInt(sizeStr, 10);
         }
