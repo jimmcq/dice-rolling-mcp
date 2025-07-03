@@ -2,7 +2,9 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { 
   ListToolsRequestSchema, 
-  CallToolRequestSchema 
+  CallToolRequestSchema,
+  ListResourcesRequestSchema,
+  ListPromptsRequestSchema
 } from '@modelcontextprotocol/sdk/types.js';
 import { DiceNotationParser } from './parser/dice-notation-parser.js';
 import { DiceRoller } from './roller/dice-roller.js';
@@ -20,6 +22,8 @@ const server = new Server({
 }, {
   capabilities: {
     tools: {},
+    resources: {},
+    prompts: {},
   },
 });
 
@@ -127,10 +131,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   throw new Error(`Unknown tool: ${request.params.name}`);
 });
 
+// Add handlers for optional MCP methods to avoid "Method not found" errors
+server.setRequestHandler(ListResourcesRequestSchema, async () => ({
+  resources: [],
+}));
+
+server.setRequestHandler(ListPromptsRequestSchema, async () => ({
+  prompts: [],
+}));
+
 // Start the server if this file is run directly
 if (process.argv[1] === new URL(import.meta.url).pathname) {
-  console.log('Dice Rolling MCP Server starting...');
+  // Use stderr for logging to avoid interfering with JSON-RPC communication on stdout
+  console.error('Dice Rolling MCP Server starting...');
   const transport = new StdioServerTransport();
   server.connect(transport);
-  console.log('Server listening.');
+  console.error('Server listening.');
 }
