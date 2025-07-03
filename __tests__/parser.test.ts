@@ -66,4 +66,65 @@ describe('DiceNotationParser', () => {
       modifier: 0,
     });
   });
+
+  // Validation tests
+  test('rejects empty notation', () => {
+    expect(() => parser.parse('')).toThrow('Dice notation cannot be empty');
+    expect(() => parser.parse('   ')).toThrow('Dice notation cannot be empty');
+  });
+
+  test('rejects invalid notation without dice', () => {
+    expect(() => parser.parse('badnotation')).toThrow('Invalid dice notation - must contain at least one die');
+    expect(() => parser.parse('123')).toThrow('Invalid dice notation - must contain at least one die');
+    expect(() => parser.parse('hello world')).toThrow('Invalid dice notation - must contain at least one die');
+  });
+
+  test('rejects zero dice count', () => {
+    expect(() => parser.parse('0d6')).toThrow('Invalid dice count: 0. Must be positive.');
+  });
+
+  test('rejects zero die size', () => {
+    expect(() => parser.parse('1d0')).toThrow('Invalid die size: 0. Must be positive.');
+  });
+
+  test('rejects excessive dice count', () => {
+    expect(() => parser.parse('1001d6')).toThrow('Too many dice: 1001. Maximum is 1000.');
+  });
+
+  test('rejects excessive die size', () => {
+    expect(() => parser.parse('1d10001')).toThrow('Die size too large: 10001. Maximum is 10000.');
+  });
+
+  test('rejects dangerous combinations', () => {
+    expect(() => parser.parse('500d500')).toThrow('Dice combination too large: 500d500. Risk of excessive computation.');
+  });
+
+  test('rejects invalid keep/drop counts', () => {
+    expect(() => parser.parse('4d6kh0')).toThrow('Invalid keep count: 0. Must be positive.');
+    expect(() => parser.parse('4d6dl0')).toThrow('Invalid drop count: 0. Must be positive.');
+    expect(() => parser.parse('4d6kh4')).toThrow('Cannot keep 4 dice from 4 dice.');
+    expect(() => parser.parse('2d20dl2')).toThrow('Cannot drop 2 dice from 2 dice.');
+  });
+
+  test('rejects invalid reroll values', () => {
+    expect(() => parser.parse('4d6r0')).toThrow('Invalid reroll value: 0. Must be between 1 and 6.');
+    expect(() => parser.parse('4d6r7')).toThrow('Invalid reroll value: 7. Must be between 1 and 6.');
+  });
+
+  test('rejects invalid success thresholds', () => {
+    expect(() => parser.parse('5d10>0')).toThrow('Invalid success threshold: 0. Must be between 1 and 10.');
+    expect(() => parser.parse('5d10>11')).toThrow('Invalid success threshold: 11. Must be between 1 and 10.');
+  });
+
+  test('rejects completely invalid parts', () => {
+    expect(() => parser.parse('2d6+abc')).toThrow('Invalid notation part: "abc". Expected dice notation or number.');
+    expect(() => parser.parse('xyz+3')).toThrow('Invalid dice notation - must contain at least one die');
+  });
+
+  test('accepts valid edge cases', () => {
+    expect(() => parser.parse('1d1')).not.toThrow();
+    expect(() => parser.parse('100d100')).not.toThrow();
+    expect(() => parser.parse('4d6kh3')).not.toThrow();
+    expect(() => parser.parse('4d6dl1')).not.toThrow();
+  });
 });

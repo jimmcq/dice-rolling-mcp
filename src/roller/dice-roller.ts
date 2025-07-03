@@ -16,6 +16,7 @@ export class DiceRoller {
         let roll = randomInt(1, term.size + 1);
         const die: DieRoll = { size: term.size, result: roll };
 
+        // Reroll mechanic: if the die shows a value in the reroll list, reroll it once
         if (term.reroll && term.reroll.includes(roll)) {
           die.rerolled = true;
           roll = randomInt(1, term.size + 1);
@@ -34,23 +35,38 @@ export class DiceRoller {
       }
 
       if (term.keep) {
+        // Sort highest to lowest first
         termRolls.sort((a, b) => (b.modified !== undefined ? b.modified : b.result) - (a.modified !== undefined ? a.modified : a.result));
-        if (term.keep.type === 'l') {
-          termRolls.reverse();
+        
+        let toKeep: DieRoll[];
+        if (term.keep.type === 'h') {
+          // Keep highest: take from the beginning (already sorted high to low)
+          toKeep = termRolls.slice(0, term.keep.count);
+        } else {
+          // Keep lowest: take from the end (lowest values)
+          toKeep = termRolls.slice(-term.keep.count);
         }
-        const toKeep = termRolls.slice(0, term.keep.count);
+        
         for (const die of termRolls) {
           if (!toKeep.includes(die)) {
             die.dropped = true;
           }
         }
       } else if (term.drop) {
+        // Sort highest to lowest first
         termRolls.sort((a, b) => (b.modified !== undefined ? b.modified : b.result) - (a.modified !== undefined ? a.modified : a.result));
+        
+        let toDrop: DieRoll[];
         if (term.drop.type === 'h') {
-          termRolls.reverse();
+          // Drop highest: take from the beginning (highest values)
+          toDrop = termRolls.slice(0, term.drop.count);
+        } else {
+          // Drop lowest: take from the end (lowest values)  
+          toDrop = termRolls.slice(-term.drop.count);
         }
-        for (let i = 0; i < term.drop.count; i++) {
-          termRolls[i].dropped = true;
+        
+        for (const die of toDrop) {
+          die.dropped = true;
         }
       }
 
