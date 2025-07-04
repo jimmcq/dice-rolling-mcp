@@ -43,6 +43,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'POST') {
     try {
       const { method, params, id } = req.body;
+      
+      // Log the request for debugging
+      console.log('MCP Request:', { method, params, id, timestamp: new Date().toISOString() });
 
       // Handle MCP initialize
       if (method === 'initialize') {
