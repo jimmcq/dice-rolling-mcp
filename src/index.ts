@@ -1,5 +1,6 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { 
   ListToolsRequestSchema, 
   CallToolRequestSchema,
@@ -139,11 +140,29 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => ({
   prompts: [],
 }));
 
-// Start the server if this file is run directly
+// For Vercel deployment - export handler
+export default async function handler(req: any, res: any) {
+  if (req.method === 'GET' && req.url === '/') {
+    // Health check endpoint
+    res.status(200).json({ 
+      name: 'dice-roller', 
+      version: '1.0.0',
+      status: 'healthy',
+      tools: ['dice_roll', 'dice_validate']
+    });
+    return;
+  }
+
+  // Handle MCP requests via SSE
+  const transport = new SSEServerTransport('/message', res);
+  server.connect(transport);
+}
+
+// Start the server if this file is run directly (local development)
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   // Use stderr for logging to avoid interfering with JSON-RPC communication on stdout
-  console.error('Dice Rolling MCP Server starting...');
+  console.error('Dice Rolling MCP Server starting locally...');
   const transport = new StdioServerTransport();
   server.connect(transport);
-  console.error('Server listening.');
+  console.error('Server listening on stdio.');
 }
