@@ -62,7 +62,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                   {
                     name: 'dice_roll',
                     description: 'Roll dice using standard notation',
-                    inputSchema: {
+                    input_schema: {
                       type: 'object',
                       properties: {
                         notation: { type: 'string', description: 'Dice notation like "3d6+2"' },
@@ -75,7 +75,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                   {
                     name: 'dice_validate',
                     description: 'Validate dice notation without rolling',
-                    inputSchema: {
+                    input_schema: {
                       type: 'object',
                       properties: {
                         notation: { type: 'string', description: 'Dice notation to validate' }
@@ -120,7 +120,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               {
                 name: 'dice_roll',
                 description: 'Roll dice using standard notation. Supports standard dice (3d6+2), advantage/disadvantage (2d20kh1), keep/drop (4d6kh3), exploding dice (3d6!), rerolls (4d6r1), and success counting (5d10>7).',
-                inputSchema: {
+                input_schema: {
                   type: 'object',
                   properties: {
                     notation: { 
@@ -143,7 +143,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               {
                 name: 'dice_validate',
                 description: 'Validate dice notation syntax without performing the roll. Useful for checking if notation is correct before rolling.',
-                inputSchema: {
+                input_schema: {
                   type: 'object',
                   properties: {
                     notation: { 
