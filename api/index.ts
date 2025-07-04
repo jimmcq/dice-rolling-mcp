@@ -1,6 +1,6 @@
 import { createMcpServer } from '@vercel/mcp-adapter';
 
 // Import our existing MCP server from the main index file
-import { server } from '../src/index.js';
+import { server } from '../src/index';
 
 export default createMcpServer(server);
