@@ -9,12 +9,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key, Bearer');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
+
+  // Log incoming request for debugging auth issues
+  console.log('Claude Tools Request:', {
+    method: req.method,
+    headers: {
+      authorization: req.headers.authorization,
+      'x-api-key': req.headers['x-api-key'],
+      'content-type': req.headers['content-type'],
+      origin: req.headers.origin,
+      'user-agent': req.headers['user-agent']
+    },
+    timestamp: new Date().toISOString()
+  });
 
   if (req.method === 'GET') {
     // Return tools in Claude's native format
