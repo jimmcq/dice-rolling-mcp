@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.14.0",
+    "@vercel/mcp-adapter": "^0.11.1",
     "zod": "^3.25.71"
   }
 }
