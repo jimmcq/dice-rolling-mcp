@@ -31,9 +31,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       name: 'dice-roller',
       description: 'Dice Rolling MCP Server',
       capabilities: {
-        tools: true,
-        resources: false,
-        prompts: false,
+        tools: {},
+        resources: {},
+        prompts: {},
       },
       transport: 'http',
     });
@@ -56,9 +56,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           result: {
             protocolVersion: '2024-11-05',
             capabilities: {
-              tools: true,
-              resources: false,
-              prompts: false,
+              tools: {
+                listChanged: true
+              },
+              resources: {},
+              prompts: {}
             },
             serverInfo: {
               name: 'dice-roller',
