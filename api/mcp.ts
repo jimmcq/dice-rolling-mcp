@@ -76,10 +76,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Handle notifications/initialized
       if (method === 'notifications/initialized') {
         console.log('Notification: initialized received - client ready');
-        res.status(200).json({
-          jsonrpc: '2.0',
-          result: null
-        });
+        // For notifications, send 204 No Content (acknowledges receipt but no response body)
+        res.status(204).end();
         return;
       }
 
