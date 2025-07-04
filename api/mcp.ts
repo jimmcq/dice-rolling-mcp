@@ -56,18 +56,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           result: {
             protocolVersion: '2024-11-05',
             capabilities: {
-              tools: {
-                listChanged: true
-              },
+              tools: {},
               resources: {},
-              prompts: {},
+              prompts: {}
             },
             serverInfo: {
               name: 'dice-roller',
-              version: '1.0.0',
-              description: 'Dice rolling server with comprehensive gaming mechanics'
-            },
-          },
+              version: '1.0.0'
+            }
+          }
         });
         return;
       }
