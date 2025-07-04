@@ -2,7 +2,7 @@
   "name": "dice-rolling-mcp",
   "version": "1.0.0",
   "description": "A TypeScript-based Model Context Protocol (MCP) server providing comprehensive dice rolling capabilities with advanced gaming mechanics",
-  "main": "dist/index.js",
+  "main": "pages/index.tsx",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
