@@ -75,10 +75,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
       // Handle notifications/initialized
       if (method === 'notifications/initialized') {
-        console.log('Notification: initialized received - client ready. Holding connection open.');
-        // On Vercel, we can't truly hold the connection open.
-        // We will not send a response, and let the function time out.
-        // This prevents the client from receiving a response and closing the connection.
+        console.log('Notification: initialized received - client ready. Responding with 200 OK and empty JSON.');
+        res.status(200).json({});
         return;
       }
 
