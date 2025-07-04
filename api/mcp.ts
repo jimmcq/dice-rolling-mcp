@@ -50,7 +50,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Handle MCP initialize
       if (method === 'initialize') {
         console.log('Initialize request - responding with capabilities');
-        res.status(200).json({
+        const response = {
           jsonrpc: '2.0',
           id,
           result: {
@@ -93,7 +93,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               version: '1.0.0'
             }
           }
-        });
+        };
+        console.log('MCP Initialize Response:', JSON.stringify(response, null, 2));
+        res.status(200).json(response);
         return;
       }
 
