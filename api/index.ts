@@ -26,8 +26,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'GET') {
     const url = new URL(req.url!, `http://${req.headers.host}`);
     
-    // Handle /tools endpoint for Claude.ai web interface
-    if (url.pathname === '/api/tools') {
+    // Handle /tools endpoint for Claude.ai web interface (fallback)
+    if (url.pathname === '/api/tools' || url.searchParams.get('endpoint') === 'tools') {
       res.status(200).json([
         {
           name: 'dice_roll',

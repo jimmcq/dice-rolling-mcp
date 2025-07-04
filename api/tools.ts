@@ -25,44 +25,54 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'GET') {
     // Return tool definitions for Claude.ai web interface
-    res.status(200).json([
-      {
-        name: 'dice_roll',
-        description: 'Roll dice using standard notation (e.g., "3d6+2", "2d20kh1")',
-        input_schema: {
-          type: 'object',
-          properties: {
-            notation: { 
-              type: 'string', 
-              description: 'Dice notation like "3d6+2", "4d6kh3", "2d20kl1", etc.' 
+    res.status(200).json({
+      tools: [
+        {
+          name: 'dice_roll',
+          description: 'Roll dice using standard notation. Supports standard dice (3d6+2), advantage/disadvantage (2d20kh1), keep/drop (4d6kh3), exploding dice (3d6!), rerolls (4d6r1), and success counting (5d10>7).',
+          input_schema: {
+            type: 'object',
+            properties: {
+              notation: { 
+                type: 'string', 
+                description: 'Dice notation string. Examples: "3d6+2" (standard roll), "2d20kh1" (advantage), "4d6dl1" (drop lowest), "3d6!" (exploding), "4d6r1" (reroll 1s), "5d10>7" (count successes)' 
+              },
+              label: { 
+                type: 'string', 
+                description: 'Optional descriptive label for the roll (e.g., "Attack roll", "Damage roll", "Saving throw")' 
+              },
+              verbose: { 
+                type: 'boolean', 
+                description: 'When true, shows detailed breakdown of individual dice results and calculations' 
+              },
             },
-            label: { 
-              type: 'string', 
-              description: 'Optional label for the roll (e.g., "Damage roll")' 
-            },
-            verbose: { 
-              type: 'boolean', 
-              description: 'Show detailed breakdown of the roll' 
-            },
+            required: ['notation'],
+            additionalProperties: false,
           },
-          required: ['notation'],
         },
-      },
-      {
-        name: 'dice_validate',
-        description: 'Validate dice notation without rolling',
-        input_schema: {
-          type: 'object',
-          properties: {
-            notation: { 
-              type: 'string', 
-              description: 'Dice notation to validate (e.g., "3d6+2")' 
+        {
+          name: 'dice_validate',
+          description: 'Validate dice notation syntax without performing the roll. Useful for checking if notation is correct before rolling.',
+          input_schema: {
+            type: 'object',
+            properties: {
+              notation: { 
+                type: 'string', 
+                description: 'Dice notation string to validate. Examples: "3d6+2", "2d20kh1", "4d6dl1"' 
+              },
             },
+            required: ['notation'],
+            additionalProperties: false,
           },
-          required: ['notation'],
         },
-      },
-    ]);
+      ],
+      version: '1.0.0',
+      server_info: {
+        name: 'dice-roller',
+        description: 'Comprehensive dice rolling server with advanced gaming mechanics',
+        version: '1.0.0'
+      }
+    });
     return;
   }
 
