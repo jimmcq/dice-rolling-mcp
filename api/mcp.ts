@@ -57,33 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             protocolVersion: '2024-11-05',
             capabilities: {
               tools: {
-                listChanged: true,
-                list: [
-                  {
-                    name: 'dice_roll',
-                    description: 'Roll dice using standard notation',
-                    input_schema: {
-                      type: 'object',
-                      properties: {
-                        notation: { type: 'string', description: 'Dice notation like "3d6+2"' },
-                        label: { type: 'string', description: 'Optional label' },
-                        verbose: { type: 'boolean', description: 'Show detailed breakdown' }
-                      },
-                      required: ['notation']
-                    }
-                  },
-                  {
-                    name: 'dice_validate',
-                    description: 'Validate dice notation without rolling',
-                    input_schema: {
-                      type: 'object',
-                      properties: {
-                        notation: { type: 'string', description: 'Dice notation to validate' }
-                      },
-                      required: ['notation']
-                    }
-                  }
-                ]
+                listChanged: true
               },
               resources: {},
               prompts: {}
