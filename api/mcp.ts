@@ -49,19 +49,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // Handle MCP initialize
       if (method === 'initialize') {
+        console.log('Initialize request - responding with capabilities');
         res.status(200).json({
           jsonrpc: '2.0',
           id,
           result: {
             protocolVersion: '2024-11-05',
             capabilities: {
-              tools: {},
+              tools: {
+                listChanged: true
+              },
+              resources: {},
+              prompts: {},
             },
             serverInfo: {
               name: 'dice-roller',
               version: '1.0.0',
+              description: 'Dice rolling server with comprehensive gaming mechanics'
             },
           },
+        });
+        return;
+      }
+
+      // Handle notifications/initialized
+      if (method === 'notifications/initialized') {
+        console.log('Notification: initialized received - client ready');
+        res.status(200).json({
+          jsonrpc: '2.0',
+          result: null
         });
         return;
       }
