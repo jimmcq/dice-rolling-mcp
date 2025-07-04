@@ -86,7 +86,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const url = new URL(req.url!, `http://${req.headers.host}`);
       
       // Handle direct tool execution for Claude.ai web interface
-      if (url.pathname === '/api/tools') {
+      if (url.pathname === '/api/tools' || req.body?.name) {
         const { name, input } = req.body;
         
         if (name === 'dice_roll') {

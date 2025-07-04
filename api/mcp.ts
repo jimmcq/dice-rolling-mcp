@@ -24,26 +24,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'GET') {
-    // Setup SSE for MCP protocol
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    
-    // Send initial connection event
-    res.write('event: connected\n');
-    res.write('data: {"type": "connected", "protocol": "mcp"}\n\n');
-    
-    // Keep connection alive
-    const keepAlive = setInterval(() => {
-      res.write('event: ping\n');
-      res.write('data: {"type": "ping"}\n\n');
-    }, 30000);
-
-    // Cleanup on close
-    req.on('close', () => {
-      clearInterval(keepAlive);
+    // Return MCP server info without SSE (Vercel doesn't support long-running connections)
+    res.status(200).json({
+      protocol: 'mcp',
+      version: '2024-11-05',
+      name: 'dice-roller',
+      description: 'Dice Rolling MCP Server',
+      capabilities: {
+        tools: true,
+        resources: false,
+        prompts: false,
+      },
+      transport: 'http',
     });
-    
     return;
   }
 
