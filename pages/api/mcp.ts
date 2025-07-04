@@ -6,8 +6,8 @@ import {
   ListResourcesRequestSchema,
   ListPromptsRequestSchema
 } from '@modelcontextprotocol/sdk/types.js';
-import { DiceNotationParser } from '../../src/parser/dice-notation-parser.js';
-import { DiceRoller } from '../../src/roller/dice-roller.js';
+import { DiceNotationParser } from '../../src/parser/dice-notation-parser';
+import { DiceRoller } from '../../src/roller/dice-roller';
 import { z } from 'zod';
 
 const diceRollInputSchema = z.object({
