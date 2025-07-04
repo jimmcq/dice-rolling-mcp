@@ -24,7 +24,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'GET') {
-    // Health check and server info
+    const url = new URL(req.url!, `http://${req.headers.host}`);
+    
+    // Handle /tools endpoint for Claude.ai web interface
+    if (url.pathname === '/api/tools') {
+      res.status(200).json([
+        {
+          name: 'dice_roll',
+          description: 'Roll dice using standard notation (e.g., "3d6+2", "2d20kh1")',
+          input_schema: {
+            type: 'object',
+            properties: {
+              notation: { 
+                type: 'string', 
+                description: 'Dice notation like "3d6+2", "4d6kh3", "2d20kl1", etc.' 
+              },
+              label: { 
+                type: 'string', 
+                description: 'Optional label for the roll (e.g., "Damage roll")' 
+              },
+              verbose: { 
+                type: 'boolean', 
+                description: 'Show detailed breakdown of the roll' 
+              },
+            },
+            required: ['notation'],
+          },
+        },
+        {
+          name: 'dice_validate',
+          description: 'Validate dice notation without rolling',
+          input_schema: {
+            type: 'object',
+            properties: {
+              notation: { 
+                type: 'string', 
+                description: 'Dice notation to validate (e.g., "3d6+2")' 
+              },
+            },
+            required: ['notation'],
+          },
+        },
+      ]);
+      return;
+    }
+    
+    // Default health check and server info
     res.status(200).json({
       name: 'dice-roller',
       version: '1.0.0',
@@ -38,9 +83,81 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'POST') {
     try {
+      const url = new URL(req.url!, `http://${req.headers.host}`);
+      
+      // Handle direct tool execution for Claude.ai web interface
+      if (url.pathname === '/api/tools') {
+        const { name, input } = req.body;
+        
+        if (name === 'dice_roll') {
+          const { notation, label, verbose } = diceRollInputSchema.parse(input);
+          const expression = parser.parse(notation);
+          const result = roller.roll(expression);
+
+          let text = `You rolled ${notation}`;
+          if (label) text += ` for ${label}`;
+          text += `:\n🎲 Total: ${result.total}`;
+          if (verbose) {
+            text += `\n📊 Breakdown: ${result.breakdown}`;
+          }
+
+          res.status(200).json({ result: text });
+          return;
+        }
+
+        if (name === 'dice_validate') {
+          const { notation } = input;
+          
+          try {
+            const expression = parser.parse(notation);
+            let text = `✅ Valid dice notation: ${notation}`;
+            
+            if (expression.dice.length > 0) {
+              text += '\n\nBreakdown:';
+              for (const die of expression.dice) {
+                const count = Math.abs(die.count);
+                const sign = die.count < 0 ? '-' : '+';
+                text += `\n• ${sign === '+' ? '' : sign}${count}d${die.size}`;
+                
+                if (die.keep) {
+                  text += ` (keep ${die.keep.type === 'h' ? 'highest' : 'lowest'} ${die.keep.count})`;
+                }
+                if (die.drop) {
+                  text += ` (drop ${die.drop.type === 'h' ? 'highest' : 'lowest'} ${die.drop.count})`;
+                }
+                if (die.reroll) {
+                  text += ` (reroll ${die.reroll.join(', ')})`;
+                }
+                if (die.explode) {
+                  text += ' (exploding dice)';
+                }
+                if (die.success) {
+                  text += ` (success on ${die.success}+)`;
+                }
+              }
+            }
+            
+            if (expression.modifier !== 0) {
+              text += `\n• Modifier: ${expression.modifier > 0 ? '+' : ''}${expression.modifier}`;
+            }
+
+            res.status(200).json({ result: text });
+            return;
+          } catch (error) {
+            res.status(200).json({ 
+              result: `❌ Invalid dice notation: ${notation}\n\nError: ${error instanceof Error ? error.message : 'Unknown parsing error'}` 
+            });
+            return;
+          }
+        }
+
+        res.status(404).json({ error: `Unknown tool: ${name}` });
+        return;
+      }
+
       const { method, params, id } = req.body;
 
-      // Handle tools/list
+      // Handle tools/list (MCP protocol)
       if (method === 'tools/list') {
         res.status(200).json({
           jsonrpc: '2.0',
