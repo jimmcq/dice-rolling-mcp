@@ -1,4 +1,4 @@
-import { createMcpServer } from '@vercel/mcp-adapter';
+import { createMcpHandler } from '@vercel/mcp-adapter';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { 
   ListToolsRequestSchema, 
@@ -140,4 +140,4 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => ({
   prompts: [],
 }));
 
-export default createMcpServer(server);
+export default createMcpHandler(server);
