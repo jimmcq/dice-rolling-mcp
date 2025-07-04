@@ -68,6 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // Handle tools/list
       if (method === 'tools/list') {
+        console.log('Tools/list called - returning tools definitions');
         res.status(200).json({
           jsonrpc: '2.0',
           id,
@@ -119,6 +120,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // Handle tools/call
       if (method === 'tools/call') {
+        console.log('Tools/call requested:', { name: params.name, args: params.arguments });
         const { name, arguments: args } = params;
 
         if (name === 'dice_roll') {
