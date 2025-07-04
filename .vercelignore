@@ -1,0 +1,8 @@
+node_modules
+dist
+__tests__
+*.test.ts
+*.test.js
+.git
+README.md
+start.sh
