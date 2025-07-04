@@ -7,7 +7,7 @@ export class StatisticsCalculator {
     const results: number[] = [];
 
     for (let i = 0; i < iterations; i++) {
-      results.push(roller.roll(expression).total);
+      results.push(roller.roll('simulated_roll', expression).total);
     }
 
     results.sort((a, b) => a - b);

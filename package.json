@@ -1,16 +1,33 @@
 {
   "name": "dice-rolling-mcp",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A TypeScript-based Model Context Protocol (MCP) server providing comprehensive dice rolling capabilities with advanced gaming mechanics",
+  "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
     "test": "jest"
   },
-  "keywords": [],
+  "keywords": [
+    "dice",
+    "mcp",
+    "model-context-protocol",
+    "tabletop",
+    "gaming",
+    "rpg",
+    "random",
+    "typescript"
+  ],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jimmcq/dice-rolling-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jimmcq/dice-rolling-mcp/issues"
+  },
+  "homepage": "https://github.com/jimmcq/dice-rolling-mcp#readme",
   "type": "module",
   "devDependencies": {
     "@types/jest": "^30.0.0",
