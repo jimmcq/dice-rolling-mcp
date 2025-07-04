@@ -165,8 +165,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (method === 'tools/call') {
         console.log('Tools/call requested:', { name: params.name, args: params.arguments });
         const { name, arguments: args } = params;
+        
+        // Handle both 'dice_roll' and 'dice-roller:dice_roll' formats
+        const toolName = name.includes(':') ? name.split(':')[1] : name;
 
-        if (name === 'dice_roll') {
+        if (toolName === 'dice_roll') {
           const { notation, label, verbose } = diceRollInputSchema.parse(args);
           const expression = parser.parse(notation);
           const result = roller.roll(expression);
@@ -188,7 +191,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return;
         }
 
-        if (name === 'dice_validate') {
+        if (toolName === 'dice_validate') {
           const { notation } = args;
           
           try {
@@ -253,7 +256,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           id,
           error: {
             code: -32601,
-            message: `Unknown tool: ${name}`,
+            message: `Unknown tool: ${name} (parsed as: ${toolName})`,
           },
         });
         return;
