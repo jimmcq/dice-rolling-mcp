@@ -6,7 +6,9 @@ import {
   ListToolsRequestSchema, 
   CallToolRequestSchema,
   ListResourcesRequestSchema,
-  ListPromptsRequestSchema
+  ListPromptsRequestSchema,
+  ReadResourceRequestSchema,
+  GetPromptRequestSchema
 } from '@modelcontextprotocol/sdk/types.js';
 import { DiceNotationParser } from './parser/dice-notation-parser.js';
 import { DiceRoller } from './roller/dice-roller.js';
@@ -37,24 +39,30 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
     {
       name: 'dice_roll',
-      description: 'Roll dice using standard notation',
+      description: 'Roll dice using standard notation. IMPORTANT: For D&D advantage use "2d20kh1" (NOT "2d20")',
       inputSchema: {
         type: 'object',
         properties: {
-          notation: { type: 'string', description: 'e.g., "3d6+2"' },
-          label: { type: 'string', description: 'e.g., "Damage roll"' },
-          verbose: { type: 'boolean', description: 'Show detailed breakdown' },
+          notation: { 
+            type: 'string', 
+            description: 'Dice notation. Examples: "1d20+5" (basic), "2d20kh1" (advantage), "2d20kl1" (disadvantage), "4d6kh3" (stats), "3d6!" (exploding)' 
+          },
+          label: { type: 'string', description: 'Optional label e.g., "Attack roll", "Fireball damage"' },
+          verbose: { type: 'boolean', description: 'Show detailed breakdown of individual dice results' },
         },
         required: ['notation'],
       },
     },
     {
       name: 'dice_validate',
-      description: 'Validate dice notation without rolling',
+      description: 'Validate and explain dice notation without rolling. Use this to understand what notation means before rolling',
       inputSchema: {
         type: 'object',
         properties: {
-          notation: { type: 'string', description: 'e.g., "3d6+2"' },
+          notation: { 
+            type: 'string', 
+            description: 'Dice notation to validate and explain. Examples: "2d20kh1+5", "4d6kh3", "8d6", "1d%"' 
+          },
         },
         required: ['notation'],
       },
@@ -134,12 +142,194 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 // Add handlers for optional MCP methods to avoid "Method not found" errors
 server.setRequestHandler(ListResourcesRequestSchema, async () => ({
-  resources: [],
+  resources: [
+    {
+      uri: 'dice://guide/notation',
+      name: 'Dice Notation Guide',
+      description: 'Comprehensive guide to dice notation including advantage, exploding dice, and complex mechanics',
+      mimeType: 'text/markdown',
+    },
+    {
+      uri: 'dice://guide/quick-reference',
+      name: 'Quick Reference',
+      description: 'Quick reference for common dice patterns and D&D 5e notation',
+      mimeType: 'text/markdown',
+    },
+  ],
 }));
 
 server.setRequestHandler(ListPromptsRequestSchema, async () => ({
-  prompts: [],
+  prompts: [
+    {
+      name: 'help',
+      description: 'Show dice notation help and common examples',
+    },
+    {
+      name: 'advantage',
+      description: 'Show how to roll with advantage/disadvantage',
+    },
+    {
+      name: 'examples',
+      description: 'Show common gaming examples (D&D, skill checks, etc.)',
+    },
+  ],
 }));
+
+// Handle resource read requests
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  const { uri } = request.params;
+  
+  if (uri === 'dice://guide/notation') {
+    const fs = await import('fs/promises');
+    const path = await import('path');
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const content = await fs.readFile(
+      path.join(__dirname, 'documentation', 'dice-notation-guide.md'), 
+      'utf-8'
+    );
+    return {
+      contents: [{
+        uri,
+        mimeType: 'text/markdown',
+        text: content,
+      }],
+    };
+  }
+  
+  if (uri === 'dice://guide/quick-reference') {
+    const fs = await import('fs/promises');
+    const path = await import('path');
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const content = await fs.readFile(
+      path.join(__dirname, 'documentation', 'quick-reference.md'), 
+      'utf-8'
+    );
+    return {
+      contents: [{
+        uri,
+        mimeType: 'text/markdown',
+        text: content,
+      }],
+    };
+  }
+  
+  throw new Error(`Unknown resource: ${uri}`);
+});
+
+// Handle prompt requests
+server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+  const { name } = request.params;
+  
+  if (name === 'help') {
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `# Dice Notation Quick Help
+
+**Basic Format**: XdY (X dice, Y sides) + optional modifier
+
+**Essential Examples**:
+- \`1d20+5\` - Single d20 with +5 modifier
+- \`3d6\` - Three d6 dice
+- \`2d20kh1\` - **Advantage** (roll 2d20, keep highest)
+- \`2d20kl1\` - **Disadvantage** (roll 2d20, keep lowest)
+
+**Special Dice**:
+- \`4dF\` - Fudge dice (-1, 0, +1)
+- \`1d%\` - Percentile (1-100)
+
+**Advanced**:
+- \`4d6kh3\` - Roll 4d6, keep best 3
+- \`3d6!\` - Exploding 6s
+- \`4d6r1\` - Reroll 1s
+- \`5d10>7\` - Count successes (7+)
+
+💡 **Use \`dice_validate\` tool to check any notation before rolling!**
+📚 **Access full guide**: @dice://guide/notation`,
+          },
+        },
+      ],
+    };
+  }
+  
+  if (name === 'advantage') {
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `# Advantage and Disadvantage
+
+**D&D 5e Advantage/Disadvantage**:
+
+✅ **CORRECT**:
+- \`2d20kh1\` - Advantage (keep highest)  
+- \`2d20kl1\` - Disadvantage (keep lowest)
+
+❌ **WRONG**:
+- \`2d20\` - This adds both dice (2-40 range, not 1-20!)
+
+**With Modifiers**:
+- \`2d20kh1+7\` - Advantage attack with +7
+- \`2d20kl1+3\` - Disadvantage save with +3
+
+**Other Keep/Drop**:
+- \`4d6kh3\` - Character stats (keep best 3 of 4)
+- \`4d6dl1\` - Same as above (drop lowest 1)
+
+Remember: Advantage means you get the BETTER result, not the SUM of both dice!`,
+          },
+        },
+      ],
+    };
+  }
+  
+  if (name === 'examples') {
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `# Common Gaming Examples
+
+**D&D 5e Combat**:
+- Attack (normal): \`1d20+7\`
+- Attack (advantage): \`2d20kh1+7\`
+- Attack (disadvantage): \`2d20kl1+7\`
+- Damage: \`1d8+4\` or \`2d6+3\`
+- Critical hit: \`2d8+4\` (double weapon dice only)
+
+**Spell Damage**:
+- Fireball: \`8d6\`
+- Magic Missile: \`1d4+1\` (per missile)
+- Healing Word: \`1d4+3\`
+
+**Character Creation**:
+- Ability scores: \`4d6kh3\` (repeat 6 times)
+- HP at level up: \`1d8\` (or take average)
+
+**Skill Checks**:
+- Normal: \`1d20+5\`
+- With advantage: \`2d20kh1+5\`
+- With Guidance: \`1d20+1d4+5\`
+
+**Other Systems**:
+- Fate/Fudge: \`4dF\`
+- Percentile: \`1d%\`
+- Exploding damage: \`3d6!\``,
+          },
+        },
+      ],
+    };
+  }
+  
+  throw new Error(`Unknown prompt: ${name}`);
+});
 
 // Start the server if this file is run directly (local development)
 if (process.argv[1] === new URL(import.meta.url).pathname) {
