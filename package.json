@@ -2,11 +2,14 @@
   "name": "dice-rolling-mcp",
   "version": "1.0.0",
   "description": "A TypeScript-based Model Context Protocol (MCP) server providing comprehensive dice rolling capabilities with advanced gaming mechanics",
-  "main": "pages/index.tsx",
+  "main": "dist/index.js",
+  "bin": {
+    "dice-rolling-mcp": "dist/index.js"
+  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev src/index.ts",
     "test": "jest"
   },
   "engines": {
@@ -36,8 +39,6 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.10",
-    "@types/react": "19.1.8",
-    "@vercel/node": "^3.0.0",
     "jest": "^30.0.4",
     "ts-jest": "^29.4.0",
     "ts-node-dev": "^2.0.0",
@@ -45,12 +46,6 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.14.0",
-    "@vercel/mcp-adapter": "^0.11.1",
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "next": "^14.2.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "zod": "^3.25.71"
   }
 }

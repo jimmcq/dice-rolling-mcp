@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { 
@@ -138,7 +140,6 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => ({
 server.setRequestHandler(ListPromptsRequestSchema, async () => ({
   prompts: [],
 }));
-
 
 // Start the server if this file is run directly (local development)
 if (process.argv[1] === new URL(import.meta.url).pathname) {
