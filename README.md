@@ -1,6 +1,6 @@
 # Dice Rolling MCP Server
 
-A TypeScript-based Model Context Protocol (MCP) server that provides comprehensive dice rolling capabilities to AI assistants. Supports standard dice notation with advanced mechanics commonly used in tabletop gaming.
+A comprehensive TypeScript-based Model Context Protocol (MCP) server that provides advanced dice rolling capabilities for AI assistants. Perfect for tabletop gaming, RPGs, and any application requiring sophisticated random number generation with gaming mechanics.
 
 ## The Problem: LLMs Can't Actually Roll Dice
 

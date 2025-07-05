@@ -10,7 +10,14 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node-dev src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.ts __tests__/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts __tests__/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts __tests__/**/*.ts",
+    "format:check": "prettier --check src/**/*.ts __tests__/**/*.ts",
+    "prepare": "husky",
+    "pre-commit": "lint-staged"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -37,9 +44,18 @@
   "homepage": "https://github.com/jimmcq/dice-rolling-mcp#readme",
   "type": "module",
   "devDependencies": {
+    "@eslint/js": "^9.30.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.10",
+    "@typescript-eslint/eslint-plugin": "^8.35.1",
+    "@typescript-eslint/parser": "^8.35.1",
+    "eslint": "^9.30.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
+    "husky": "^9.1.7",
     "jest": "^30.0.4",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2",
     "ts-jest": "^29.4.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
@@ -47,5 +63,12 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.14.0",
     "zod": "^3.25.71"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
   }
 }

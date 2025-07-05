@@ -14,4 +14,22 @@ export default {
       },
     ],
   },
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/index.ts',
+  ],
+  coverageReporters: ['text', 'lcov', 'html'],
+  coverageDirectory: 'coverage',
+  coverageThreshold: {
+    global: {
+      branches: 75,
+      functions: 95,
+      lines: 95,
+      statements: 95,
+    },
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(@modelcontextprotocol)/)'
+  ]
 };

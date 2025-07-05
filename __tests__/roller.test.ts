@@ -30,7 +30,7 @@ describe('DiceRoller', () => {
       .mockReturnValueOnce(1)
       .mockReturnValueOnce(7);
 
-    const result = roller.roll("test", expression);
+    const result = roller.roll('test', expression);
     expect(result.total).toBe(3);
   });
 
@@ -47,13 +47,13 @@ describe('DiceRoller', () => {
       .mockReturnValueOnce(5)
       .mockReturnValueOnce(6);
 
-    const result = roller.roll("test", expression);
+    const result = roller.roll('test', expression);
     expect(result.total).toBe(11); // 5 + 6
-    
+
     // Check that the lowest dice are marked as dropped
     const droppedCount = result.rolls.filter(roll => roll.dropped).length;
     expect(droppedCount).toBe(2);
-    
+
     const keptCount = result.rolls.filter(roll => !roll.dropped).length;
     expect(keptCount).toBe(2);
   });
@@ -71,13 +71,13 @@ describe('DiceRoller', () => {
       .mockReturnValueOnce(5)
       .mockReturnValueOnce(6);
 
-    const result = roller.roll("test", expression);
+    const result = roller.roll('test', expression);
     expect(result.total).toBe(4); // 1 + 3
-    
+
     // Check that the highest dice are marked as dropped
     const droppedCount = result.rolls.filter(roll => roll.dropped).length;
     expect(droppedCount).toBe(2);
-    
+
     const keptCount = result.rolls.filter(roll => !roll.dropped).length;
     expect(keptCount).toBe(2);
   });
@@ -95,13 +95,13 @@ describe('DiceRoller', () => {
       .mockReturnValueOnce(5)
       .mockReturnValueOnce(6);
 
-    const result = roller.roll("test", expression);
+    const result = roller.roll('test', expression);
     expect(result.total).toBe(9); // 1 + 3 + 5
-    
+
     // Check that only the highest die is dropped
     const droppedCount = result.rolls.filter(roll => roll.dropped).length;
     expect(droppedCount).toBe(1);
-    
+
     const keptCount = result.rolls.filter(roll => !roll.dropped).length;
     expect(keptCount).toBe(3);
   });
@@ -119,13 +119,13 @@ describe('DiceRoller', () => {
       .mockReturnValueOnce(5)
       .mockReturnValueOnce(6);
 
-    const result = roller.roll("test", expression);
+    const result = roller.roll('test', expression);
     expect(result.total).toBe(14); // 3 + 5 + 6
-    
+
     // Check that only the lowest die is dropped
     const droppedCount = result.rolls.filter(roll => roll.dropped).length;
     expect(droppedCount).toBe(1);
-    
+
     const keptCount = result.rolls.filter(roll => !roll.dropped).length;
     expect(keptCount).toBe(3);
   });
@@ -136,11 +136,9 @@ describe('DiceRoller', () => {
       modifier: 0,
     };
 
-    mockedRandomInt
-      .mockReturnValueOnce(3)
-      .mockReturnValueOnce(5);
+    mockedRandomInt.mockReturnValueOnce(3).mockReturnValueOnce(5);
 
-    const result = roller.roll("test", expression);
+    const result = roller.roll('test', expression);
     expect(result.total).toBe(8);
     expect(result.rolls).toHaveLength(2);
     expect(result.rolls[0].result).toBe(3);

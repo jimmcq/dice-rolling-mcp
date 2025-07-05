@@ -2,7 +2,10 @@ import { DiceExpression, Statistics } from '../types.js';
 import { DiceRoller } from '../roller/dice-roller.js';
 
 export class StatisticsCalculator {
-  calculate(expression: DiceExpression, iterations: number = 10000): Statistics {
+  calculate(
+    expression: DiceExpression,
+    iterations: number = 10000
+  ): Statistics {
     const roller = new DiceRoller();
     const results: number[] = [];
 

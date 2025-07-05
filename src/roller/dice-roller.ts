@@ -8,14 +8,15 @@ export class DiceRoller {
     let breakdown = '';
 
     for (const term of expression.dice) {
-      let termRolls: DieRoll[] = [];
+      const termRolls: DieRoll[] = [];
       const isNegative = term.count < 0;
       const count = Math.abs(term.count);
 
       for (let i = 0; i < count; i++) {
         let roll = randomInt(1, term.size + 1);
-        if (term.size === 1 && term.count === 1) { // Fudge dice
-          roll = roll === 1 ? -1 : (roll === 2 ? 0 : 1);
+        if (term.size === 1 && term.count === 1) {
+          // Fudge dice
+          roll = roll === 1 ? -1 : roll === 2 ? 0 : 1;
         }
         const die: DieRoll = { size: term.size, result: roll };
 
@@ -32,15 +33,23 @@ export class DiceRoller {
           let explodedRoll;
           do {
             explodedRoll = randomInt(1, term.size + 1);
-            termRolls.push({ size: term.size, result: explodedRoll, exploded: true });
+            termRolls.push({
+              size: term.size,
+              result: explodedRoll,
+              exploded: true,
+            });
           } while (explodedRoll === term.size);
         }
       }
 
       if (term.keep) {
         // Sort highest to lowest first
-        termRolls.sort((a, b) => (b.modified !== undefined ? b.modified : b.result) - (a.modified !== undefined ? a.modified : a.result));
-        
+        termRolls.sort(
+          (a, b) =>
+            (b.modified !== undefined ? b.modified : b.result) -
+            (a.modified !== undefined ? a.modified : a.result)
+        );
+
         let toKeep: DieRoll[];
         if (term.keep.type === 'h') {
           // Keep highest: take from the beginning (already sorted high to low)
@@ -49,7 +58,7 @@ export class DiceRoller {
           // Keep lowest: take from the end (lowest values)
           toKeep = termRolls.slice(-term.keep.count);
         }
-        
+
         for (const die of termRolls) {
           if (!toKeep.includes(die)) {
             die.dropped = true;
@@ -57,17 +66,21 @@ export class DiceRoller {
         }
       } else if (term.drop) {
         // Sort highest to lowest first
-        termRolls.sort((a, b) => (b.modified !== undefined ? b.modified : b.result) - (a.modified !== undefined ? a.modified : a.result));
-        
+        termRolls.sort(
+          (a, b) =>
+            (b.modified !== undefined ? b.modified : b.result) -
+            (a.modified !== undefined ? a.modified : a.result)
+        );
+
         let toDrop: DieRoll[];
         if (term.drop.type === 'h') {
           // Drop highest: take from the beginning (highest values)
           toDrop = termRolls.slice(0, term.drop.count);
         } else {
-          // Drop lowest: take from the end (lowest values)  
+          // Drop lowest: take from the end (lowest values)
           toDrop = termRolls.slice(-term.drop.count);
         }
-        
+
         for (const die of toDrop) {
           die.dropped = true;
         }
@@ -78,7 +91,8 @@ export class DiceRoller {
       let successes = 0;
 
       for (const die of termRolls) {
-        const finalResult = die.modified !== undefined ? die.modified : die.result;
+        const finalResult =
+          die.modified !== undefined ? die.modified : die.result;
         if (!die.dropped) {
           if (term.success) {
             if (finalResult >= term.success) {
@@ -90,9 +104,9 @@ export class DiceRoller {
         }
         termBreakdown.push(
           `${die.result}` +
-          `${die.rerolled ? `(r${die.modified})` : ''}` +
-          `${die.exploded ? '!' : ''}` +
-          `${die.dropped ? 'd' : ''}`
+            `${die.rerolled ? `(r${die.modified})` : ''}` +
+            `${die.exploded ? '!' : ''}` +
+            `${die.dropped ? 'd' : ''}`
         );
       }
 
@@ -111,11 +125,13 @@ export class DiceRoller {
     }
 
     if (expression.modifier) {
-      breakdown += expression.modifier > 0 ? ` + ${expression.modifier}` : ` - ${Math.abs(expression.modifier)}`;
+      breakdown +=
+        expression.modifier > 0
+          ? ` + ${expression.modifier}`
+          : ` - ${Math.abs(expression.modifier)}`;
     }
 
     return {
-      
       notation,
       total,
       rolls: allRolls,
