@@ -144,4 +144,25 @@ describe('DiceRoller', () => {
     expect(result.rolls[0].result).toBe(3);
     expect(result.rolls[1].result).toBe(5);
   });
+
+  test('should handle reroll mechanic', () => {
+    const expression = {
+      dice: [{ count: 2, size: 6, reroll: [1] }],
+      modifier: 0,
+    };
+
+    // First die: rolls 1 (reroll), then rolls 4
+    // Second die: rolls 3 (no reroll)
+    mockedRandomInt
+      .mockReturnValueOnce(1) // Initial roll that triggers reroll
+      .mockReturnValueOnce(4) // Reroll result
+      .mockReturnValueOnce(3); // Second die
+
+    const result = roller.roll('test', expression);
+    expect(result.total).toBe(7); // 4 + 3
+    expect(result.rolls).toHaveLength(2);
+    expect(result.rolls[0].rerolled).toBe(true);
+    expect(result.rolls[0].modified).toBe(4);
+    expect(result.rolls[1].rerolled).toBeUndefined();
+  });
 });
