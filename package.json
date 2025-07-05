@@ -61,8 +61,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.14.0",
-    "zod": "^3.25.71"
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "zod": "^3.25.74"
   },
   "lint-staged": {
     "*.{ts,js}": [
