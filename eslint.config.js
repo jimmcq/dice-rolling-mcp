@@ -14,6 +14,10 @@ export default [
         ecmaVersion: 'latest',
         sourceType: 'module',
       },
+      globals: {
+        Response: 'readonly',
+        Request: 'readonly',
+      },
     },
     plugins: {
       '@typescript-eslint': typescript,

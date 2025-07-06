@@ -3,73 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dice Rolling MCP Server</title>
+    <title>Advanced Dice Rolling MCP Server</title>
     <style>
         body { 
-            font-family: Arial, sans-serif; 
-            max-width: 800px; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 900px; 
             margin: 50px auto; 
             padding: 20px;
             line-height: 1.6;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .main-title {
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin: 0;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
         }
         .highlight { 
-            background: #f0f0f0; 
-            padding: 10px; 
-            border-radius: 5px; 
-            margin: 10px 0;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border: 1px solid #e2e8f0;
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 20px 0;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow: auto;
+            font-size: 14px;
+            margin: 0;
         }
         code {
-            background: #e0e0e0;
+            background: #e2e8f0;
             padding: 2px 5px;
             border-radius: 3px;
+            font-size: 13px;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .tool-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .tool-title {
+            margin: 0 0 10px 0;
+            color: #2b6cb0;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            color: #856404;
+        }
+        .endpoints-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .endpoint-card {
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .endpoint-sse {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+        }
+        .endpoint-websocket {
+            background: #f0f4ff;
+            border: 1px solid #a3bffa;
+        }
+        .endpoint-http {
+            background: #fef5e7;
+            border: 1px solid #f6d55c;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
         }
     </style>
 </head>
 <body>
-    <h1>🎲 Dice Rolling MCP Server</h1>
-    
-    <p>This is a <strong>Model Context Protocol (MCP) server</strong> providing comprehensive dice rolling capabilities for AI assistants.</p>
-    
-    <h2>Remote MCP Usage</h2>
-    
-    <div class="highlight">
-        <h3>Configure in Claude Desktop:</h3>
-        <pre><code>{
+    <div class="header">
+        <h1 class="main-title">🎲 Advanced Dice Rolling MCP Server</h1>
+        <p class="subtitle">Comprehensive Model Context Protocol server for tabletop gaming and RPGs</p>
+    </div>
+    <div class="section">
+        <h2 class="section-title">🚀 Remote MCP Configuration</h2>
+        
+        <div class="highlight">
+            <h3 style="margin: 0 0 15px 0; color: #2d3748;">Configure in Claude Desktop:</h3>
+            <pre class="code-block">{
   "mcpServers": {
     "dice-rolling-remote": {
       "command": "npx",
-      "args": ["@modelcontextprotocol/client-stdio", "connect", "&lt;YOUR_DEPLOYMENT_URL&gt;/sse"]
+      "args": [
+        "@modelcontextprotocol/client-stdio", 
+        "connect", 
+        "&lt;YOUR_DEPLOYMENT_URL&gt;/sse"
+      ]
     }
   }
-}</code></pre>
+}</pre>
+        </div>
     </div>
 
-    <h2>Available Tools</h2>
-    <ul>
-        <li><strong>dice_roll</strong> - Roll dice using standard notation</li>
-        <li><strong>dice_validate</strong> - Validate and explain dice notation</li>
-    </ul>
+    <div class="section">
+        <h2 class="section-title">🛠️ Available Tools & Features</h2>
+        
+        <div class="tools-grid">
+            <div class="tool-card">
+                <h3 class="tool-title">🎲 dice_roll</h3>
+                <p style="margin: 0 0 10px 0; font-size: 14px;">Roll dice using standard notation with full gaming support</p>
+                <ul style="font-size: 13px; margin: 0; padding-left: 16px;">
+                    <li>Basic notation: <code>1d20+5</code></li>
+                    <li>Advantage/Disadvantage: <code>2d20kh1</code></li>
+                    <li>Exploding dice: <code>3d6!</code></li>
+                    <li>Rerolls: <code>4d6r1</code></li>
+                    <li>Success counting: <code>5d10>7</code></li>
+                </ul>
+            </div>
+            
+            <div class="tool-card">
+                <h3 class="tool-title">✅ dice_validate</h3>
+                <p style="margin: 0 0 10px 0; font-size: 14px;">Validate and explain dice notation without rolling</p>
+                <ul style="font-size: 13px; margin: 0; padding-left: 16px;">
+                    <li>Parse complex notation</li>
+                    <li>Explain mechanics</li>
+                    <li>Catch syntax errors</li>
+                    <li>Educational breakdowns</li>
+                </ul>
+            </div>
+        </div>
 
-    <h2>Example Notations</h2>
-    <ul>
-        <li><code>1d20+5</code> - Basic roll with modifier</li>
-        <li><code>2d20kh1</code> - <strong>Advantage</strong> (keep highest)</li>
-        <li><code>2d20kl1</code> - <strong>Disadvantage</strong> (keep lowest)</li>
-        <li><code>4d6kh3</code> - Character stats (keep best 3 of 4)</li>
-        <li><code>3d6!</code> - Exploding dice</li>
-        <li><code>4d6r1</code> - Reroll 1s</li>
-        <li><code>5d10>7</code> - Count successes (7+)</li>
-    </ul>
+        <div class="warning-box">
+            <strong>⚠️ Important:</strong> For D&D 5e advantage, always use <code>2d20kh1</code> (NOT <code>2d20</code>). 
+            The latter adds both dice together (2-40 range) instead of keeping the higher roll (1-20 range).
+        </div>
+    </div>
 
-    <p><strong>Important:</strong> For D&D 5e advantage, use <code>2d20kh1</code> (NOT <code>2d20</code>)!</p>
+    <div class="section">
+        <h2 class="section-title">🌐 Protocol Endpoints</h2>
+        
+        <div class="endpoints-grid">
+            <div class="endpoint-card endpoint-sse">
+                <h4 style="margin: 0 0 8px 0; color: #22543d;">/sse</h4>
+                <p style="margin: 0; font-size: 13px; color: #2f855a;">Server-Sent Events transport</p>
+            </div>
+            
+            <div class="endpoint-card endpoint-websocket">
+                <h4 style="margin: 0 0 8px 0; color: #2c5282;">/websocket</h4>
+                <p style="margin: 0; font-size: 13px; color: #3182ce;">WebSocket transport</p>
+            </div>
+            
+            <div class="endpoint-card endpoint-http">
+                <h4 style="margin: 0 0 8px 0; color: #744210;">/http</h4>
+                <p style="margin: 0; font-size: 13px; color: #a16207;">HTTP transport</p>
+            </div>
+        </div>
+    </div>
 
-    <h2>Protocol Endpoints</h2>
-    <ul>
-        <li><strong>/sse</strong> - Server-Sent Events transport</li>
-        <li><strong>/websocket</strong> - WebSocket transport</li>
-        <li><strong>/http</strong> - HTTP transport</li>
-    </ul>
-
-    <p>🔗 <a href="https://github.com/jimmcq/dice-rolling-mcp">View on GitHub</a></p>
+    <div class="footer">
+        <p style="margin: 0 0 10px 0;">
+            🔗 <a href="https://github.com/jimmcq/dice-rolling-mcp" style="color: #3182ce; text-decoration: none;">View on GitHub</a>
+        </p>
+        <p style="margin: 0; font-size: 14px;">
+            Built with ❤️ for tabletop gaming communities
+        </p>
+    </div>
 </body>
 </html>
