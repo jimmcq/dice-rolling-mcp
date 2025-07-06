@@ -238,6 +238,119 @@ const handler = createMcpHandler(
         }
       }
     );
+
+    // Add resources for documentation
+    server.resource('dice://guide/notation', async () => {
+      return {
+        contents: [
+          {
+            uri: 'dice://guide/notation',
+            mimeType: 'text/markdown',
+            text: `# Dice Notation Guide
+
+## Basic Format
+**XdY** - Roll X dice with Y sides
+
+## Essential Examples
+- \`1d20+5\` - Single d20 with +5 modifier
+- \`3d6\` - Three d6 dice
+- \`2d20kh1\` - **Advantage** (roll 2d20, keep highest)
+- \`2d20kl1\` - **Disadvantage** (roll 2d20, keep lowest)
+
+## Advanced Mechanics
+- \`4d6kh3\` - Roll 4d6, keep best 3 (character stats)
+- \`3d6!\` - Exploding dice (reroll max values)
+- \`4d6r1\` - Reroll 1s
+- \`5d10>7\` - Count successes (7+)
+
+## Special Dice
+- \`4dF\` - Fudge dice (-1, 0, +1)
+- \`1d%\` - Percentile (1-100)
+
+**Important**: For D&D 5e advantage, use \`2d20kh1\` NOT \`2d20\`!`,
+          },
+        ],
+      };
+    });
+
+    server.resource('dice://guide/quick-reference', async () => {
+      return {
+        contents: [
+          {
+            uri: 'dice://guide/quick-reference',
+            mimeType: 'text/markdown',
+            text: `# Quick Reference
+
+## D&D 5e Essentials
+- \`2d20kh1\` - Advantage
+- \`2d20kl1\` - Disadvantage
+- \`4d6kh3\` - Stat generation
+- \`8d6\` - Fireball damage
+
+## Common Rolls
+- \`1d20+5\` - Attack/check with +5
+- \`2d6+3\` - Damage with +3
+- \`1d4+1\` - Magic Missile
+- \`1d%\` - Percentile roll`,
+          },
+        ],
+      };
+    });
+
+    // Add prompts for help
+    server.prompt('help', async () => ({
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `# Dice Notation Quick Help
+
+**Basic Format**: XdY (X dice, Y sides) + optional modifier
+
+**Essential Examples**:
+- \`1d20+5\` - Single d20 with +5 modifier
+- \`3d6\` - Three d6 dice
+- \`2d20kh1\` - **Advantage** (roll 2d20, keep highest)
+- \`2d20kl1\` - **Disadvantage** (roll 2d20, keep lowest)
+
+**Advanced**:
+- \`4d6kh3\` - Roll 4d6, keep best 3
+- \`3d6!\` - Exploding 6s
+- \`4d6r1\` - Reroll 1s
+- \`5d10>7\` - Count successes (7+)
+
+💡 **Use \`dice_validate\` tool to check any notation before rolling!**`,
+          },
+        },
+      ],
+    }));
+
+    server.prompt('examples', async () => ({
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `# Common Gaming Examples
+
+**D&D 5e Combat**:
+- Attack (normal): \`1d20+7\`
+- Attack (advantage): \`2d20kh1+7\`
+- Damage: \`1d8+4\` or \`2d6+3\`
+- Fireball: \`8d6\`
+
+**Character Creation**:
+- Ability scores: \`4d6kh3\` (repeat 6 times)
+- HP level up: \`1d8\`
+
+**Other Systems**:
+- Fate/Fudge: \`4dF\`
+- Percentile: \`1d%\``,
+          },
+        },
+      ],
+    }));
   },
   {
     capabilities: {
@@ -250,12 +363,39 @@ const handler = createMcpHandler(
           description: 'Validate and explain dice notation without rolling',
         },
       },
+      resources: {
+        'dice://guide/notation': {
+          name: 'Dice Notation Guide',
+          description:
+            'Comprehensive guide to dice notation including advantage, exploding dice, and complex mechanics',
+          mimeType: 'text/markdown',
+        },
+        'dice://guide/quick-reference': {
+          name: 'Quick Reference',
+          description:
+            'Quick reference for common dice patterns and D&D 5e notation',
+          mimeType: 'text/markdown',
+        },
+      },
+      prompts: {
+        help: {
+          description: 'Show dice notation help and common examples',
+        },
+        examples: {
+          description: 'Show common gaming examples (D&D, skill checks, etc.)',
+        },
+      },
     },
   },
   {
     basePath: '',
     verboseLogs: true,
     maxDuration: 60,
+    home: {
+      title: 'Advanced Dice Rolling MCP Server',
+      description:
+        'True randomness for AI assistants with comprehensive gaming mechanics',
+    },
   }
 );
 
