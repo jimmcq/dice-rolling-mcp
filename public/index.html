@@ -133,7 +133,7 @@
       "args": [
         "@modelcontextprotocol/client-stdio", 
         "connect", 
-        "&lt;YOUR_DEPLOYMENT_URL&gt;/sse"
+        "https://dice-rolling-mcp.vercel.app/mcp"
       ]
     }
   }
@@ -176,23 +176,96 @@
     </div>
 
     <div class="section">
+        <h2 class="section-title">📋 Quick Reference</h2>
+        
+        <div class="highlight">
+            <h3 style="margin: 0 0 15px 0; color: #2d3748;">Most Common Patterns</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 15px;">
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #4a5568;">Basic Rolls</h4>
+                    <ul style="font-size: 13px; margin: 0; padding-left: 16px;">
+                        <li><code>1d20</code> - Single d20</li>
+                        <li><code>3d6</code> - Three d6</li>
+                        <li><code>1d8+3</code> - d8 plus modifier</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #4a5568;">D&D 5e Essential</h4>
+                    <ul style="font-size: 13px; margin: 0; padding-left: 16px;">
+                        <li><code>2d20kh1</code> - <strong>Advantage</strong> (NOT 2d20)</li>
+                        <li><code>2d20kl1</code> - <strong>Disadvantage</strong></li>
+                        <li><code>4d6kh3</code> - Stat generation</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #4a5568;">Special Mechanics</h4>
+                    <ul style="font-size: 13px; margin: 0; padding-left: 16px;">
+                        <li><code>3d6!</code> - Exploding 6s</li>
+                        <li><code>4d6r1</code> - Reroll 1s</li>
+                        <li><code>5d10>7</code> - Count 7+ as successes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">📖 Complete Dice Notation Guide</h2>
+        
+        <div class="highlight">
+            <h3 style="margin: 0 0 15px 0; color: #2d3748;">Advantage and Disadvantage</h3>
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 12px; border-radius: 4px; margin: 10px 0; color: #856404;">
+                <strong>⚠️ IMPORTANT</strong>: For D&D 5e advantage/disadvantage, use these formats:
+                <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+                    <li><code>2d20kh1</code> - <strong>Advantage</strong> (roll 2d20, keep highest 1)</li>
+                    <li><code>2d20kl1</code> - <strong>Disadvantage</strong> (roll 2d20, keep lowest 1)</li>
+                </ul>
+                <p style="margin: 8px 0 0 0;">❌ <strong>Wrong</strong>: <code>2d20</code> (adds both dice = 2-40 range)<br>
+                ✅ <strong>Correct</strong>: <code>2d20kh1</code> (keeps higher die = 1-20 range)</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #4a5568;">Keep and Drop Mechanics</h4>
+                    <ul style="font-size: 13px; margin: 0; padding-left: 16px;">
+                        <li><code>4d6kh3</code> - Keep highest 3 of 4d6</li>
+                        <li><code>4d6kl3</code> - Keep lowest 3 of 4d6</li>
+                        <li><code>4d6dh1</code> - Drop highest 1 (= kl3)</li>
+                        <li><code>4d6dl1</code> - Drop lowest 1 (= kh3)</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #4a5568;">Special Dice</h4>
+                    <ul style="font-size: 13px; margin: 0; padding-left: 16px;">
+                        <li><code>4dF</code> - Fudge dice (-1, 0, +1)</li>
+                        <li><code>1d%</code> - Percentile die (1-100)</li>
+                        <li><code>1d2</code> - Coin flip</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #4a5568;">Gaming Examples</h4>
+                    <ul style="font-size: 13px; margin: 0; padding-left: 16px;">
+                        <li><code>2d20kh1+7</code> - Advantage attack +7</li>
+                        <li><code>8d6</code> - Fireball damage</li>
+                        <li><code>1d20+1d4+3</code> - Check with guidance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
         <h2 class="section-title">🌐 Protocol Endpoints</h2>
         
-        <div class="endpoints-grid">
-            <div class="endpoint-card endpoint-sse">
-                <h4 style="margin: 0 0 8px 0; color: #22543d;">/sse</h4>
-                <p style="margin: 0; font-size: 13px; color: #2f855a;">Server-Sent Events transport</p>
-            </div>
-            
-            <div class="endpoint-card endpoint-websocket">
-                <h4 style="margin: 0 0 8px 0; color: #2c5282;">/websocket</h4>
-                <p style="margin: 0; font-size: 13px; color: #3182ce;">WebSocket transport</p>
-            </div>
-            
-            <div class="endpoint-card endpoint-http">
-                <h4 style="margin: 0 0 8px 0; color: #744210;">/http</h4>
-                <p style="margin: 0; font-size: 13px; color: #a16207;">HTTP transport</p>
-            </div>
+        <div class="highlight">
+            <h3 style="margin: 0 0 15px 0; color: #2d3748;">MCP Integration URL</h3>
+            <p style="margin: 0; font-size: 14px; color: #4a5568;">Use this endpoint for remote MCP connections:</p>
+            <pre class="code-block" style="margin: 10px 0;">https://dice-rolling-mcp.vercel.app/mcp</pre>
         </div>
     </div>
 
@@ -200,8 +273,11 @@
         <p style="margin: 0 0 10px 0;">
             🔗 <a href="https://github.com/jimmcq/dice-rolling-mcp" style="color: #3182ce; text-decoration: none;">View on GitHub</a>
         </p>
-        <p style="margin: 0; font-size: 14px;">
+        <p style="margin: 0 0 10px 0; font-size: 14px;">
             Built with ❤️ for tabletop gaming communities
+        </p>
+        <p style="margin: 0; font-size: 14px; color: #718096;">
+            Created by <a href="https://www.linkedin.com/in/jimmcquillan/" style="color: #3182ce; text-decoration: none;">Jim McQuillan</a>
         </p>
     </div>
 </body>

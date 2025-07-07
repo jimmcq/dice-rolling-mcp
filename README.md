@@ -57,10 +57,29 @@ Validates dice notation without executing the roll, providing detailed breakdown
 **Parameters:**
 - `notation` (required): Dice notation string to validate
 
-## Installation
+## Remote MCP Integration
+
+This server is deployed and ready to use with Claude Desktop. Configure your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "dice-rolling-remote": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/client-stdio", 
+        "connect", 
+        "https://dice-rolling-mcp.vercel.app/mcp"
+      ]
+    }
+  }
+}
+```
+
+## Local Installation
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/jimmcq/dice-rolling-mcp
 cd dice-rolling-mcp
 npm install
 npm run build
@@ -219,11 +238,17 @@ The server supports various configuration options through the `DiceRollerConfig`
 - Cryptographically secure random number generation
 - No external network dependencies
 
+## Links
+
+- **Repository**: [https://github.com/jimmcq/dice-rolling-mcp](https://github.com/jimmcq/dice-rolling-mcp)
+- **Live Demo**: [https://dice-rolling-mcp.vercel.app](https://dice-rolling-mcp.vercel.app)
+- **MCP Endpoint**: [https://dice-rolling-mcp.vercel.app/mcp](https://dice-rolling-mcp.vercel.app/mcp)
+
 ## Author
 
 **Jim McQuillan**
-- GitHub: [@jimmcq](https://github.com/jimmcq)
-- LinkedIn: [jimmcquillan](https://linkedin.com/in/jimmcquillan/)
+- GitHub: [https://github.com/jimmcq](https://github.com/jimmcq)
+- LinkedIn: [https://www.linkedin.com/in/jimmcquillan/](https://www.linkedin.com/in/jimmcquillan/)
 
 ## License
 
