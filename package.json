@@ -7,9 +7,9 @@
     "dice-rolling-mcp": "dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts",
+    "build": "next build",
+    "start": "next start",
+    "dev": "next dev",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "lint": "eslint src/**/*.ts __tests__/**/*.ts app/**/*.ts",
@@ -20,7 +20,7 @@
     "pre-commit": "lint-staged",
     "build:mcp": "tsc",
     "start:mcp": "node dist/index.js",
-    "dev:mcp": "ts-node-dev src/index.js"
+    "dev:mcp": "tsx watch src/index.ts"
   },
   "engines": {
     "node": ">=18.0.0"
