@@ -30,6 +30,6 @@ export default {
     },
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(@modelcontextprotocol)/)'
+    'node_modules/(?!(@modelcontextprotocol|zod)/)'
   ]
 };
