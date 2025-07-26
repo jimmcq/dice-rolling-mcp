@@ -81,6 +81,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     let text = `You rolled ${notation}`;
     if (label) text += ` for ${label}`;
     text += `:\n🎲 Total: ${result.total}`;
+    
+    // Check for critical success/fail on single d20 results
+    const effectiveRolls = result.rolls.filter(roll => !roll.dropped && roll.size === 20);
+    if (effectiveRolls.length === 1) {
+      const d20Roll = effectiveRolls[0];
+      const finalResult = d20Roll.modified !== undefined ? d20Roll.modified : d20Roll.result;
+      if (d20Roll.result === 20) {
+        text += `\n✨ Natural 20 - Critical Success!`;
+      } else if (d20Roll.result === 1) {
+        text += `\n💥 Natural 1 - Critical Fail!`;
+      }
+    }
+    
     if (verbose) {
       text += `\n📊 Breakdown: ${result.breakdown}`;
     }

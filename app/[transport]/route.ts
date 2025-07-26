@@ -136,6 +136,18 @@ const handler = createMcpHandler(
           let text = `You rolled ${notation}`;
           if (label) text += ` for ${label}`;
           text += `:\n🎲 Total: ${result.total}`;
+
+          // Check for critical success/fail on single d20 results
+          const diceMatch = notation.match(/^(\d+)d(\d+|%|F)/i);
+          if (result.rolls.length === 1 && diceMatch && diceMatch[2] === '20') {
+            const roll = result.rolls[0];
+            if (roll === 20) {
+              text += `\n✨ Natural 20 - Critical Success!`;
+            } else if (roll === 1) {
+              text += `\n💥 Natural 1 - Critical Fail!`;
+            }
+          }
+
           if (verbose) {
             text += `\n📊 Breakdown: ${result.breakdown}`;
           }
