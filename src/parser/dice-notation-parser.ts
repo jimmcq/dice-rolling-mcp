@@ -81,6 +81,10 @@ export class DiceNotationParser {
           size,
         };
 
+        if (sizeStr === 'f') {
+          term.fudge = true;
+        }
+
         const keepDrop = diceMatch[3];
         const keepDropCount = diceMatch[4] ? parseInt(diceMatch[4], 10) : 1;
         if (keepDrop) {

@@ -13,10 +13,12 @@ export class DiceRoller {
       const count = Math.abs(term.count);
 
       for (let i = 0; i < count; i++) {
-        let roll = randomInt(1, term.size + 1);
-        if (term.size === 1 && term.count === 1) {
-          // Fudge dice
-          roll = roll === 1 ? -1 : roll === 2 ? 0 : 1;
+        let roll: number;
+        if (term.fudge) {
+          // Fudge dice: uniform -1, 0, 1
+          roll = randomInt(0, 3) - 1;
+        } else {
+          roll = randomInt(1, term.size + 1);
         }
         const die: DieRoll = { size: term.size, result: roll };
 

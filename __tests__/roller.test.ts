@@ -1,6 +1,7 @@
 import { DiceRoller } from '../src/roller/dice-roller';
 import { DiceExpression } from '../src/types';
 import { randomInt } from 'crypto';
+import { DiceNotationParser } from '../src/parser/dice-notation-parser';
 
 // Mock the crypto module
 jest.mock('crypto', () => ({
@@ -12,6 +13,7 @@ const mockedRandomInt = randomInt as jest.Mock;
 
 describe('DiceRoller', () => {
   const roller = new DiceRoller();
+  const parser = new DiceNotationParser();
 
   beforeEach(() => {
     mockedRandomInt.mockClear();
@@ -164,5 +166,18 @@ describe('DiceRoller', () => {
     expect(result.rolls[0].rerolled).toBe(true);
     expect(result.rolls[0].modified).toBe(4);
     expect(result.rolls[1].rerolled).toBeUndefined();
+  });
+
+  test('rolls fudge dice correctly', () => {
+    const expression = parser.parse('3dF');
+
+    mockedRandomInt
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(1)
+      .mockReturnValueOnce(2);
+
+    const result = roller.roll('test', expression);
+    expect(result.rolls.map(r => r.result)).toEqual([-1, 0, 1]);
+    expect(result.total).toBe(0);
   });
 });

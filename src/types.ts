@@ -48,6 +48,7 @@ export interface DiceExpression {
 export interface DiceTerm {
   count: number;
   size: number;
+  fudge?: boolean;
   explode?: boolean;
   reroll?: number[]; // reroll if in value
   keep?: { type: 'h' | 'l'; count: number };
