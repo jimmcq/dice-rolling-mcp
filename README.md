@@ -29,7 +29,7 @@ The result: AI assistants can now provide truly random dice rolls with mathemati
 
 ### Standard Dice Notation
 - **Basic rolls**: `1d20`, `3d6`, `2d10`
-- **Modifiers**: `1d20+5`, `2d6-3`, `1d8*2`
+- **Modifiers**: `1d20+5`, `2d6-3`
 - **Multiple dice types**: `1d20+2d6+3`
 - **Percentile dice**: `1d%` (d100)
 - **Fudge dice**: `4dF` (Fate/Fudge system)
