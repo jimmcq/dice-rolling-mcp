@@ -47,7 +47,7 @@
   "homepage": "https://github.com/jimmcq/dice-rolling-mcp#readme",
   "type": "module",
   "devDependencies": {
-    "@eslint/js": "^9.31.0",
+    "@eslint/js": "^9.33.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.1.0",
     "@types/react": "^19",
