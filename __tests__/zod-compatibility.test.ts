@@ -63,9 +63,9 @@ describe('Zod Compatibility', () => {
   test('version info is accessible', async () => {
     // This test documents the expected zod version for future reference
     const pkg = await import('zod/package.json');
-    expect(pkg.version).toMatch(/^3\./); // Should be v3.x to match MCP SDK
+    expect(pkg.version).toMatch(/^4\./); // Updated to v4.x
 
     // Ensure it's the specific version we expect
-    expect(pkg.version).toBe('3.25.76');
+    expect(pkg.version).toBe('4.0.17');
   });
 });
