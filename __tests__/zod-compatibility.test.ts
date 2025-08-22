@@ -60,12 +60,48 @@ describe('Zod Compatibility', () => {
     expect(() => parser.parse('1d0')).toThrow('Invalid die size');
   });
 
+  test('MCP server operations work without Zod version conflicts', () => {
+    // This test exercises the actual operations that would fail with the MCP error
+    // If there's a Zod version conflict, these operations will throw "b._parse is not a function"
+
+    const parser = new DiceNotationParser();
+    const roller = new DiceRoller();
+
+    // Test operations that internally use Zod parsing in our MCP server
+    expect(() => {
+      // These operations mirror what happens in the MCP server request handlers
+      const expression1 = parser.parse('2d20kh1+5'); // advantage roll
+      const result1 = roller.roll('2d20kh1+5', expression1);
+      expect(result1.total).toBeGreaterThanOrEqual(6);
+
+      const expression2 = parser.parse('4d6kh3'); // character stats
+      const result2 = roller.roll('4d6kh3', expression2);
+      expect(result2.total).toBeGreaterThanOrEqual(3);
+
+      const expression3 = parser.parse('1d%'); // percentile dice
+      const result3 = roller.roll('1d%', expression3);
+      expect(result3.total).toBeGreaterThanOrEqual(1);
+      expect(result3.total).toBeLessThanOrEqual(100);
+    }).not.toThrow();
+
+    // Test validation operations that would also fail with version conflicts
+    expect(() => {
+      parser.parse('3d6!'); // exploding dice
+      parser.parse('5d10>7'); // success counting
+      parser.parse('4dF'); // fudge dice
+    }).not.toThrow();
+
+    // Test error cases - these should throw parsing errors, not version conflicts
+    expect(() => parser.parse('')).toThrow('Dice notation cannot be empty');
+    expect(() => parser.parse('invalid')).toThrow('Invalid dice notation');
+  });
+
   test('version info is accessible', async () => {
     // This test documents the expected zod version for future reference
     const pkg = await import('zod/package.json');
-    expect(pkg.version).toMatch(/^4\./); // Updated to v4.x
+    expect(pkg.version).toMatch(/^3\./); // Using v3.x for MCP SDK compatibility
 
-    // Ensure it's the specific version we expect
-    expect(pkg.version).toBe('4.0.17');
+    // Ensure it's the specific version we expect for MCP compatibility
+    expect(pkg.version).toBe('3.25.76');
   });
 });
