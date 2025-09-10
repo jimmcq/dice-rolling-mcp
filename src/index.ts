@@ -38,6 +38,20 @@ const roller = new DiceRoller();
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
     {
+      name: 'search',
+      description: 'Search dice rolling documentation, guides, and examples',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          query: { 
+            type: 'string', 
+            description: 'Search query to find relevant dice rolling information, examples, or notation help' 
+          },
+        },
+        required: ['query'],
+      },
+    },
+    {
       name: 'dice_roll',
       description: 'Roll dice using standard notation. IMPORTANT: For D&D advantage use "2d20kh1" (NOT "2d20")',
       inputSchema: {
@@ -72,6 +86,126 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 
 // Register tools/call handler
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  if (request.params.name === 'search') {
+    const args = request.params.arguments as { query: string } | undefined;
+    const { query } = args || { query: '' };
+    
+    if (!query?.trim()) {
+      throw new Error('Search query is required');
+    }
+
+    const searchTerm = query.toLowerCase().trim();
+    
+    // Define searchable content for dice rolling
+    const searchableContent = [
+      {
+        id: 'basic-notation',
+        title: 'Basic Dice Notation',
+        url: 'dice://guide/notation#basic',
+        content: 'basic dice notation XdY format standard rolling examples 1d20 3d6 2d8',
+        description: 'Learn basic dice notation like 1d20, 3d6, and standard rolling formats'
+      },
+      {
+        id: 'advantage-disadvantage',
+        title: 'D&D Advantage and Disadvantage',
+        url: 'dice://guide/notation#advantage',
+        content: 'advantage disadvantage dnd 2d20kh1 2d20kl1 keep highest lowest',
+        description: 'D&D 5e advantage (2d20kh1) and disadvantage (2d20kl1) mechanics'
+      },
+      {
+        id: 'modifiers',
+        title: 'Dice Modifiers and Bonuses',
+        url: 'dice://guide/notation#modifiers',
+        content: 'modifiers bonus penalty +5 -2 1d20+7 3d6+2 adding numbers',
+        description: 'How to add modifiers and bonuses to dice rolls like 1d20+5'
+      },
+      {
+        id: 'ability-scores',
+        title: 'Character Ability Scores',
+        url: 'dice://guide/notation#ability',
+        content: 'ability scores character creation 4d6kh3 4d6dl1 stats generation',
+        description: 'Rolling ability scores with 4d6kh3 (keep highest 3 of 4 dice)'
+      },
+      {
+        id: 'exploding-dice',
+        title: 'Exploding Dice',
+        url: 'dice://guide/notation#exploding',
+        content: 'exploding dice 3d6! reroll maximum ace penetrating open ended',
+        description: 'Exploding dice notation (3d6!) where max rolls trigger additional dice'
+      },
+      {
+        id: 'rerolling',
+        title: 'Rerolling Dice',
+        url: 'dice://guide/notation#reroll',
+        content: 'reroll rerolling 4d6r1 reroll ones bad results once',
+        description: 'Rerolling specific values like 4d6r1 (reroll any 1s once)'
+      },
+      {
+        id: 'percentile-dice',
+        title: 'Percentile Dice',
+        url: 'dice://guide/notation#percentile',
+        content: 'percentile dice 1d% d100 1-100 percentage rolls',
+        description: 'Percentile dice (1d% or d100) for rolling 1-100'
+      },
+      {
+        id: 'fudge-dice',
+        title: 'Fudge Dice',
+        url: 'dice://guide/notation#fudge',
+        content: 'fudge dice 4dF fate dice -1 0 +1 ladder',
+        description: 'Fudge/Fate dice (4dF) with results of -1, 0, or +1'
+      },
+      {
+        id: 'success-counting',
+        title: 'Success Counting',
+        url: 'dice://guide/notation#success',
+        content: 'success counting 5d10>7 threshold target number successes',
+        description: 'Count successes above a threshold like 5d10>7'
+      },
+      {
+        id: 'combat-examples',
+        title: 'Combat Roll Examples',
+        url: 'dice://examples/combat',
+        content: 'combat attack damage critical hit weapon spell fireball 8d6 2d8+4',
+        description: 'Common combat rolls: attacks, damage, critical hits, spells'
+      },
+      {
+        id: 'spell-damage',
+        title: 'Spell Damage Examples',
+        url: 'dice://examples/spells',
+        content: 'spell damage fireball 8d6 magic missile 1d4+1 healing 2d4+2',
+        description: 'Spell damage patterns like Fireball (8d6) and Magic Missile (1d4+1)'
+      },
+      {
+        id: 'skill-checks',
+        title: 'Skill Check Examples',
+        url: 'dice://examples/skills',
+        content: 'skill check ability check 1d20+modifier proficiency bonus guidance',
+        description: 'Skill and ability checks with modifiers and bonuses'
+      }
+    ];
+
+    // Filter content based on search query
+    const matchingContent = searchableContent.filter(item => 
+      item.title.toLowerCase().includes(searchTerm) ||
+      item.content.toLowerCase().includes(searchTerm) ||
+      item.description.toLowerCase().includes(searchTerm)
+    );
+
+    // Format results according to MCP specification
+    const results = matchingContent.map(item => ({
+      id: item.id,
+      title: item.title,
+      url: item.url
+    }));
+
+    // Return JSON-encoded string as required by MCP spec
+    const jsonResults = JSON.stringify({ results });
+
+    return {
+      content: [{ type: 'text', text: jsonResults }],
+    };
+  }
+
   if (request.params.name === 'dice_roll') {
     const { notation, label, verbose } = request.params.arguments as z.infer<typeof diceRollInputSchema>;
     const expression = parser.parse(notation);

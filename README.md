@@ -43,6 +43,14 @@ The result: AI assistants can now provide truly random dice rolls with mathemati
 
 ### MCP Tools
 
+#### `search`
+Discovers available dice rolling operations and documentation. **Required for ChatGPT Connector compatibility.**
+
+**Parameters:**
+- `query` (required): Search query to find relevant dice rolling information
+
+**Returns:** JSON with search results containing `id`, `title`, and `url` fields as per OpenAI MCP specification.
+
 #### `dice_roll`
 Executes dice rolls using standard notation with optional labeling and verbose output.
 
@@ -57,9 +65,24 @@ Validates dice notation without executing the roll, providing detailed breakdown
 **Parameters:**
 - `notation` (required): Dice notation string to validate
 
-## Remote MCP Integration
+## Remote MCP Integration (Streamable HTTP)
 
-This server is deployed and ready to use with Claude Desktop. Configure your `claude_desktop_config.json`:
+This MCP server supports **Streamable HTTP transport** for remote connections and implements the OpenAI MCP specification, including the required `search` tool for operation discovery.
+
+### Compatible With:
+- **Claude Remote MCP Connectors** (via `@modelcontextprotocol/client-stdio`)
+- **ChatGPT Connectors** (via MCP Inspector)
+- **Any MCP client** supporting Streamable HTTP transport
+
+### Connection Endpoints:
+- **Local Development**: `http://localhost:3000/mcp`
+- **Production**: `https://dice-rolling-mcp.vercel.app/mcp`
+
+The `search` tool enables both Claude and ChatGPT to discover available dice rolling operations automatically.
+
+## Local MCP Integration (STDIO)
+
+For local Claude Desktop integration, configure your `claude_desktop_config.json`:
 
 ```json
 {
@@ -163,6 +186,17 @@ Breakdown:
 • Modifier: +5
 ```
 
+### Discovery (Remote MCP Integration)
+```
+Human: What dice operations are available?
+Assistant: [Calls search tool with query "dice"]
+🎲 Found dice rolling operations:
+- Basic Dice Notation: Learn standard XdY format
+- D&D Advantage and Disadvantage: 2d20kh1 mechanics
+- Combat Roll Examples: Attack, damage, spells
+- Ability Score Generation: 4d6kh3 for character stats
+```
+
 ## Architecture
 
 ### Core Components
@@ -227,7 +261,9 @@ The server supports various configuration options through the `DiceRollerConfig`
 - **Language**: TypeScript 5.8+
 - **Runtime**: Node.js 18+ (tested with v24.0.2)
 - **Protocol**: MCP (Model Context Protocol) 2024-11-05
-- **Dependencies**: Minimal (zod, @modelcontextprotocol/sdk)
+- **OpenAI Compatibility**: Implements OpenAI MCP specification with required `search` tool
+- **Transport Support**: STDIO (local Claude Desktop) + Streamable HTTP (remote connections)
+- **Dependencies**: Minimal (zod, @modelcontextprotocol/sdk, @vercel/mcp-adapter)
 - **Module System**: ES Modules
 - **Test Framework**: Jest with ts-jest
 
