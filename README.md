@@ -70,15 +70,15 @@ Validates dice notation without executing the roll, providing detailed breakdown
 This MCP server supports **Streamable HTTP transport** for remote connections and implements the OpenAI MCP specification, including the required `search` tool for operation discovery.
 
 ### Compatible With:
-- **Claude Remote MCP Connectors** (via `@modelcontextprotocol/client-stdio`)
-- **ChatGPT Connectors** (via MCP Inspector)
+- **Claude Remote MCP Connectors** (and Claude Desktop)
+- **ChatGPT Connectors** (currently only in Developer Mode)
 - **Any MCP client** supporting Streamable HTTP transport
 
 ### Connection Endpoints:
 - **Local Development**: `http://localhost:3000/mcp`
 - **Production**: `https://dice-rolling-mcp.vercel.app/mcp`
 
-The `search` tool enables both Claude and ChatGPT to discover available dice rolling operations automatically.
+The `search` and `fetch` tools enable both Claude and ChatGPT to discover available dice rolling operations automatically.
 
 ## Local MCP Integration (STDIO)
 
