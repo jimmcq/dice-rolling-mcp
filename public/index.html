@@ -36,10 +36,15 @@
         .main-title {
             font-size: 2.5rem;
             margin: 0 0 10px 0;
+        }
+        .gradient-text {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+        .emoji {
+            color: initial;
         }
         .subtitle {
             font-size: 1.2rem;
@@ -134,11 +139,21 @@
 </head>
 <body>
     <div class="header">
-        <h1 class="main-title">🎲 Advanced Dice Rolling MCP Server</h1>
-        <p class="subtitle">Comprehensive Model Context Protocol server for tabletop gaming and RPGs</p>
+        <h1 class="main-title"><span class="emoji">🎲</span> <span class="gradient-text">Advanced Dice Rolling MCP Server</span></h1>
+        <p class="subtitle">TypeScript-based MCP server for AI assistants</p>
     </div>
     <div class="section">
+        <p style="font-size: 16px; line-height: 1.6; margin-bottom: 30px; color: #4a5568;">
+            A comprehensive TypeScript-based Model Context Protocol (MCP) server that provides advanced dice rolling capabilities for AI assistants. Perfect for tabletop gaming, RPGs, and any application requiring sophisticated random number generation with gaming mechanics.
+        </p>
+        
         <h2 class="section-title">🚀 Remote MCP Configuration</h2>
+        
+        <div class="highlight">
+            <h3 style="margin: 0 0 15px 0; color: #2d3748;">MCP Integration URL - Compatible with Claude and ChatGPT Connectors</h3>
+            <p style="margin: 0 0 10px 0; font-size: 14px; color: #4a5568;">Use this endpoint for remote MCP connections:</p>
+            <pre class="code-block" style="margin: 10px 0;">https://dice-rolling-mcp.vercel.app/mcp</pre>
+        </div>
         
         <div class="highlight">
             <h3 style="margin: 0 0 15px 0; color: #2d3748;">Configure in Claude Desktop:</h3>
@@ -275,19 +290,10 @@
         </div>
     </div>
     
-    <div class="section">
-        <h2 class="section-title">🌐 Protocol Endpoints</h2>
-        
-        <div class="highlight">
-            <h3 style="margin: 0 0 15px 0; color: #2d3748;">MCP Integration URL</h3>
-            <p style="margin: 0; font-size: 14px; color: #4a5568;">Use this endpoint for remote MCP connections:</p>
-            <pre class="code-block" style="margin: 10px 0;">https://dice-rolling-mcp.vercel.app/mcp</pre>
-        </div>
-    </div>
 
     <div class="footer">
         <p style="margin: 0 0 10px 0;">
-            🔗 <a href="https://github.com/jimmcq/dice-rolling-mcp" style="color: #3182ce; text-decoration: none;">View on GitHub</a>
+            🔗 <a href="https://github.com/jimmcq/dice-rolling-mcp" style="color: #3182ce; text-decoration: none; font-weight: 500;">View on GitHub</a> • ⭐ Star this project if you find it useful!
         </p>
         <p style="margin: 0 0 10px 0; font-size: 14px;">
             Built with ❤️ for tabletop gaming communities
