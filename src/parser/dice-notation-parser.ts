@@ -15,7 +15,7 @@ export class DiceNotationParser {
     // Check for basic dice pattern - must contain at least one die
     if (!/\d*d(\d+|%|F)/i.test(cleanNotation)) {
       throw new Error(
-        'Invalid dice notation - must contain at least one die (e.g., "d6", "2d20")'
+        'Invalid dice notation. Use formats like: 1d20, 3d6+2, 2d20kh1 (advantage), or 4d6kh3'
       );
     }
 
@@ -99,7 +99,7 @@ export class DiceNotationParser {
           }
           if (keepDropCount >= Math.abs(count)) {
             throw new Error(
-              `Cannot ${type === 'k' ? 'keep' : 'drop'} ${keepDropCount} dice from ${Math.abs(count)} dice.`
+              `Cannot ${type === 'k' ? 'keep' : 'drop'} ${keepDropCount} dice from only ${Math.abs(count)} dice. Try: ${Math.abs(count)}d${size}${type}${type === 'k' ? 'h' : 'l'}${Math.abs(count) - 1}`
             );
           }
 
@@ -141,7 +141,7 @@ export class DiceNotationParser {
           modifier += currentOperator === '-' ? -num : num;
         } else {
           throw new Error(
-            `Invalid notation part: "${part}". Expected dice notation or number.`
+            `Invalid notation part: "${part}". Use dice notation (1d20, 3d6) or modifiers (+5, -2). Examples: 1d20+5, 2d20kh1+3, 4d6kh3`
           );
         }
       }

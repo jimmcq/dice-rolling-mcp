@@ -78,13 +78,13 @@ describe('DiceNotationParser', () => {
 
   test('rejects invalid notation without dice', () => {
     expect(() => parser.parse('badnotation')).toThrow(
-      'Invalid dice notation - must contain at least one die'
+      'Invalid dice notation. Use formats like:'
     );
     expect(() => parser.parse('123')).toThrow(
-      'Invalid dice notation - must contain at least one die'
+      'Invalid dice notation. Use formats like:'
     );
     expect(() => parser.parse('hello world')).toThrow(
-      'Invalid dice notation - must contain at least one die'
+      'Invalid dice notation. Use formats like:'
     );
   });
 
@@ -126,10 +126,10 @@ describe('DiceNotationParser', () => {
       'Invalid drop count: 0. Must be positive.'
     );
     expect(() => parser.parse('4d6kh4')).toThrow(
-      'Cannot keep 4 dice from 4 dice.'
+      'Cannot keep 4 dice from only 4 dice.'
     );
     expect(() => parser.parse('2d20dl2')).toThrow(
-      'Cannot drop 2 dice from 2 dice.'
+      'Cannot drop 2 dice from only 2 dice.'
     );
   });
 
@@ -153,10 +153,10 @@ describe('DiceNotationParser', () => {
 
   test('rejects completely invalid parts', () => {
     expect(() => parser.parse('2d6+abc')).toThrow(
-      'Invalid notation part: "abc". Expected dice notation or number.'
+      'Invalid notation part: "abc". Use dice notation'
     );
     expect(() => parser.parse('xyz+3')).toThrow(
-      'Invalid dice notation - must contain at least one die'
+      'Invalid dice notation. Use formats like:'
     );
   });
 

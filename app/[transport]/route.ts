@@ -9,7 +9,9 @@ function rollDice(notation: string) {
   );
 
   if (!match) {
-    throw new Error(`Invalid dice notation: ${notation}`);
+    throw new Error(
+      `Invalid dice notation: ${notation}. Use formats like: 1d20+5, 2d20kh1 (advantage), 3d6!, or 4d6kh3`
+    );
   }
 
   const [

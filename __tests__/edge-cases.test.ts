@@ -153,16 +153,16 @@ describe('Edge Cases and Error Handling', () => {
   describe('Parser Validation', () => {
     test('should require at least one die in notation', () => {
       expect(() => parser.parse('5')).toThrow(
-        'Invalid dice notation - must contain at least one die'
+        'Invalid dice notation. Use formats like:'
       );
     });
 
     test('should handle drop/keep validation properly', () => {
       expect(() => parser.parse('1d6dl1')).toThrow(
-        'Cannot drop 1 dice from 1 dice'
+        'Cannot drop 1 dice from only 1 dice'
       );
       expect(() => parser.parse('2d6kh3')).toThrow(
-        'Cannot keep 3 dice from 2 dice'
+        'Cannot keep 3 dice from only 2 dice'
       );
     });
   });
