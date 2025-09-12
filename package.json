@@ -33,9 +33,16 @@
     "gaming",
     "rpg",
     "random",
-    "typescript"
+    "typescript",
+    "claude",
+    "ai-assistant",
+    "dnd",
+    "pathfinder",
+    "fate",
+    "savage-worlds",
+    "cryptographically-secure"
   ],
-  "author": "",
+  "author": "Jim McQuillan <jim@jimmcq.com>",
   "license": "ISC",
   "repository": {
     "type": "git",
