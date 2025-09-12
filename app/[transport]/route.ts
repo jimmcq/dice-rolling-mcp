@@ -1,4 +1,5 @@
 import { createMcpHandler } from '@vercel/mcp-adapter';
+import { randomInt } from 'crypto';
 import { z } from 'zod';
 
 // Simple dice rolling function based on the original local MCP logic
@@ -42,14 +43,14 @@ function rollDice(notation: string) {
     let roll: number;
     if (sizeStr === 'F') {
       // Fudge dice: -1, 0, +1
-      roll = Math.floor(Math.random() * 3) - 1;
+      roll = randomInt(0, 3) - 1;
     } else {
-      roll = Math.floor(Math.random() * size) + 1;
+      roll = randomInt(1, size + 1);
     }
 
     // Handle rerolls
     if (rerollType && rerollValue && roll === parseInt(rerollValue)) {
-      roll = Math.floor(Math.random() * size) + 1;
+      roll = randomInt(1, size + 1);
     }
 
     rolls.push(roll);
@@ -58,7 +59,7 @@ function rollDice(notation: string) {
     if (explode && roll === size) {
       let explodedRoll: number;
       do {
-        explodedRoll = Math.floor(Math.random() * size) + 1;
+        explodedRoll = randomInt(1, size + 1);
         rolls.push(explodedRoll);
       } while (explodedRoll === size);
     }
