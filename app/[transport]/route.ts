@@ -1,8 +1,11 @@
 import { createMcpHandler } from '@vercel/mcp-adapter';
 import { z } from 'zod';
-import { DiceNotationParser } from '@/src/parser/dice-notation-parser';
-import { DiceRoller } from '@/src/roller/dice-roller';
-import { searchContent, fetchContent } from '@/src/shared/search-content';
+import { DiceNotationParser } from '../../dist/parser/dice-notation-parser.js';
+import { DiceRoller } from '../../dist/roller/dice-roller.js';
+import {
+  searchContent,
+  fetchContent,
+} from '../../dist/shared/search-content.js';
 
 // Initialize parser and roller
 const parser = new DiceNotationParser();
