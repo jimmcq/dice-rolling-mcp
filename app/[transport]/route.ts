@@ -254,8 +254,21 @@ const handler = createMcpHandler(
         // Return JSON-encoded string as required by MCP spec
         const jsonResults = JSON.stringify({ results });
 
+        // Build structured content
+        const structuredContent = {
+          query,
+          results: results.map((r, index) => ({
+            id: r.id,
+            title: r.title,
+            snippet: r.url,
+            relevance: 1.0 - index * 0.1,
+          })),
+          totalResults: results.length,
+        };
+
         return {
           content: [{ type: 'text', text: jsonResults }],
+          structuredContent,
         };
       }
     );
@@ -635,8 +648,21 @@ Rolling for abilities and skills:
 
         const jsonDocument = JSON.stringify(document);
 
+        // Build structured content
+        const structuredContent = {
+          id: document.id,
+          title: document.title,
+          content: document.text,
+          metadata: {
+            category: document.metadata.category,
+            tags: [document.metadata.type, document.metadata.source],
+            lastUpdated: new Date().toISOString(),
+          },
+        };
+
         return {
           content: [{ type: 'text', text: jsonDocument }],
+          structuredContent,
         };
       }
     );
@@ -669,13 +695,18 @@ Rolling for abilities and skills:
           text += `:\n🎲 Total: ${result.total}`;
 
           // Check for critical success/fail on single d20 results
+          let critical:
+            | { type: 'success' | 'fail'; naturalRoll: number }
+            | undefined;
           const diceMatch = notation.match(/^(\d+)d(\d+|%|F)/i);
           if (result.rolls.length === 1 && diceMatch && diceMatch[2] === '20') {
             const roll = result.rolls[0];
             if (roll === 20) {
               text += `\n✨ Natural 20 - Critical Success!`;
+              critical = { type: 'success', naturalRoll: 20 };
             } else if (roll === 1) {
               text += `\n💥 Natural 1 - Critical Fail!`;
+              critical = { type: 'fail', naturalRoll: 1 };
             }
           }
 
@@ -683,8 +714,25 @@ Rolling for abilities and skills:
             text += `\n📊 Breakdown: ${result.breakdown}`;
           }
 
+          // Extract modifier from notation
+          const modMatch = notation.match(/([+-]\d+)$/);
+          const modifier = modMatch ? parseInt(modMatch[1]) : undefined;
+
+          // Build structured content
+          const structuredContent = {
+            notation,
+            label,
+            total: result.total,
+            rolls: result.rolls.map(r => ({ size: 0, result: r })), // Basic structure
+            timestamp: new Date().toISOString(),
+            breakdown: result.breakdown,
+            critical,
+            modifier,
+          };
+
           return {
             content: [{ type: 'text', text }],
+            structuredContent,
           };
         } catch (error) {
           return {
@@ -721,6 +769,15 @@ Rolling for abilities and skills:
           const match = notation.match(
             /^(\d+)d(\d+|%|F)(?:(kh|kl|dh|dl)(\d+))?(?:(r)(\d+))?([!])?([>](\d+))?([+-]\d+)?$/i
           );
+
+          const breakdown: {
+            dice: Array<{ count: number; size: number; modifiers: string[] }>;
+            modifier: number;
+          } = {
+            dice: [],
+            modifier: 0,
+          };
+
           if (match) {
             const [
               ,
@@ -736,6 +793,8 @@ Rolling for abilities and skills:
               modifier,
             ] = match;
 
+            const modifiers: string[] = [];
+
             text += '\n\nBreakdown:';
             text += `\n• ${countStr}d${sizeStr} - Roll ${countStr} ${sizeStr}-sided dice`;
 
@@ -747,36 +806,67 @@ Rolling for abilities and skills:
                 ? 'highest'
                 : 'lowest';
               text += `\n• ${keepDropType.toLowerCase()} - ${action} ${highLow} ${keepDropNum}`;
+              modifiers.push(`${action} ${highLow} ${keepDropNum}`);
             }
 
             if (rerollType && rerollValue) {
               text += `\n• r${rerollValue} - reroll ${rerollValue}s`;
+              modifiers.push(`reroll ${rerollValue}`);
             }
 
             if (explode) {
               text += `\n• ! - exploding dice (reroll max values)`;
+              modifiers.push('exploding');
             }
 
             if (successType && successValue) {
               text += `\n• >${successValue} - count successes (${successValue}+)`;
+              modifiers.push(`success on ${successValue}+`);
             }
 
             if (modifier) {
               text += `\n• ${modifier} - modifier`;
+              breakdown.modifier = parseInt(modifier);
             }
+
+            breakdown.dice.push({
+              count: parseInt(countStr),
+              size:
+                sizeStr === '%' ? 100 : sizeStr === 'F' ? 3 : parseInt(sizeStr),
+              modifiers,
+            });
           }
+
+          // Build structured content
+          const structuredContent = {
+            notation,
+            valid: true,
+            breakdown,
+          };
 
           return {
             content: [{ type: 'text', text }],
+            structuredContent,
           };
         } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : 'Unknown parsing error';
+
+          // Build structured content for invalid notation
+          const structuredContent = {
+            notation,
+            valid: false,
+            error: errorMessage,
+          };
+
           return {
             content: [
               {
                 type: 'text',
-                text: `❌ Invalid dice notation: ${notation}\n\nError: ${error instanceof Error ? error.message : 'Unknown parsing error'}`,
+                text: `❌ Invalid dice notation: ${notation}\n\nError: ${errorMessage}`,
               },
             ],
+            structuredContent,
           };
         }
       }

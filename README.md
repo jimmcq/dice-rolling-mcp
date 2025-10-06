@@ -49,7 +49,19 @@ Discovers available dice rolling operations and documentation. **Required for Ch
 **Parameters:**
 - `query` (required): Search query to find relevant dice rolling information
 
-**Returns:** JSON with search results containing `id`, `title`, and `url` fields as per OpenAI MCP specification.
+**Returns:**
+- `content`: JSON with search results containing `id`, `title`, and `url` fields
+- `structuredContent`: Machine-readable search results with relevance scoring
+
+#### `fetch`
+Retrieves detailed content for a specific dice rolling topic by ID.
+
+**Parameters:**
+- `id` (required): Topic ID from search results
+
+**Returns:**
+- `content`: JSON document with full content
+- `structuredContent`: Metadata and structured document information
 
 #### `dice_roll`
 Executes dice rolls using standard notation with optional labeling and verbose output.
@@ -59,11 +71,41 @@ Executes dice rolls using standard notation with optional labeling and verbose o
 - `label` (optional): Descriptive label for the roll
 - `verbose` (optional): Show detailed breakdown of individual dice
 
+**Returns:**
+- `content`: Human-readable text with roll results and emojis
+- `structuredContent`: Complete roll data including:
+  - `notation`: Original dice notation
+  - `total`: Final result
+  - `rolls`: Individual die results with metadata (dropped, exploded, etc.)
+  - `breakdown`: Mathematical breakdown string
+  - `critical`: Critical success/fail detection for d20 rolls
+  - `modifier`: Applied modifiers
+  - `timestamp`: ISO timestamp of the roll
+
 #### `dice_validate`
 Validates dice notation without executing the roll, providing detailed breakdown of what the notation means.
 
 **Parameters:**
 - `notation` (required): Dice notation string to validate
+
+**Returns:**
+- `content`: Human-readable validation result
+- `structuredContent`: Structured validation data including:
+  - `valid`: Boolean validation status
+  - `expression`: Parsed dice expression (if valid)
+  - `breakdown`: Structured breakdown of dice and modifiers
+  - `error`: Error message (if invalid)
+
+### Structured Content Support
+
+All tools return both human-readable `content` and machine-readable `structuredContent` following the **OpenAI Apps SDK** specification. This enables:
+
+- **Programmatic access** to roll results and validation data
+- **Component templates** for rich UI rendering (future enhancement)
+- **Integration with AI workflows** requiring structured data
+- **Advanced features** like roll history, statistics, and visualizations
+
+The structured content includes complete metadata about each operation, making it suitable for building advanced applications on top of the dice rolling capabilities.
 
 ## Remote MCP Integration (Streamable HTTP)
 

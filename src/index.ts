@@ -13,6 +13,12 @@ import {
 import { DiceNotationParser } from './parser/dice-notation-parser.js';
 import { DiceRoller } from './roller/dice-roller.js';
 import { searchContent, fetchContent } from './shared/search-content.js';
+import {
+  DiceRollStructuredContent,
+  DiceValidationStructuredContent,
+  SearchResultStructuredContent,
+  FetchContentStructuredContent
+} from './types.js';
 import { z } from 'zod';
 
 const diceRollInputSchema = z.object({
@@ -108,8 +114,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const results = searchContent(query);
     const jsonResults = JSON.stringify({ results });
 
+    const structuredContent: SearchResultStructuredContent = {
+      query,
+      results: results.map((r, index) => ({
+        id: r.id,
+        title: r.title,
+        snippet: r.url,
+        relevance: 1.0 - index * 0.1, // Simple relevance scoring
+      })),
+      totalResults: results.length,
+    };
+
     return {
       content: [{ type: 'text', text: jsonResults }],
+      structuredContent,
     };
   }
 
@@ -120,8 +138,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const document = fetchContent(id);
     const jsonDocument = JSON.stringify(document);
 
+    const structuredContent: FetchContentStructuredContent = {
+      id: document.id,
+      title: document.title,
+      content: document.text,
+      metadata: {
+        category: document.metadata.category,
+        tags: [document.metadata.type, document.metadata.source],
+        lastUpdated: new Date().toISOString(),
+      },
+    };
+
     return {
       content: [{ type: 'text', text: jsonDocument }],
+      structuredContent,
     };
   }
 
@@ -134,35 +164,79 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     let text = `You rolled ${notation}`;
     if (label) text += ` for ${label}`;
     text += `:\n🎲 Total: ${result.total}`;
-    
+
     // Check for critical success/fail on single d20 results
+    let critical: DiceRollStructuredContent['critical'] = undefined;
     const effectiveRolls = result.rolls.filter(roll => !roll.dropped && roll.size === 20);
     if (effectiveRolls.length === 1) {
       const d20Roll = effectiveRolls[0];
       const finalResult = d20Roll.modified !== undefined ? d20Roll.modified : d20Roll.result;
       if (d20Roll.result === 20) {
         text += `\n✨ Natural 20 - Critical Success!`;
+        critical = { type: 'success', naturalRoll: 20 };
       } else if (d20Roll.result === 1) {
         text += `\n💥 Natural 1 - Critical Fail!`;
+        critical = { type: 'fail', naturalRoll: 1 };
       }
     }
-    
+
     if (verbose) {
       text += `\n📊 Breakdown: ${result.breakdown}`;
     }
 
+    // Build structured content
+    const structuredContent: DiceRollStructuredContent = {
+      notation: result.notation,
+      label: result.label,
+      total: result.total,
+      rolls: result.rolls,
+      timestamp: result.timestamp,
+      breakdown: result.breakdown,
+      critical,
+      modifier: expression.modifier !== 0 ? expression.modifier : undefined,
+    };
+
     return {
       content: [{ type: 'text', text }],
+      structuredContent,
     };
   }
 
   if (request.params.name === 'dice_validate') {
     const { notation } = request.params.arguments as { notation: string };
-    
+
     try {
       const expression = parser.parse(notation);
       let text = `✅ Valid dice notation: ${notation}`;
-      
+
+      // Build structured breakdown
+      const breakdown = {
+        dice: expression.dice.map(die => {
+          const modifiers: string[] = [];
+          if (die.keep) {
+            modifiers.push(`keep ${die.keep.type === 'h' ? 'highest' : 'lowest'} ${die.keep.count}`);
+          }
+          if (die.drop) {
+            modifiers.push(`drop ${die.drop.type === 'h' ? 'highest' : 'lowest'} ${die.drop.count}`);
+          }
+          if (die.reroll) {
+            modifiers.push(`reroll ${die.reroll.join(', ')}`);
+          }
+          if (die.explode) {
+            modifiers.push('exploding');
+          }
+          if (die.success) {
+            modifiers.push(`success on ${die.success}+`);
+          }
+          return {
+            count: Math.abs(die.count),
+            size: die.size,
+            modifiers,
+          };
+        }),
+        modifier: expression.modifier,
+      };
+
       // Provide breakdown of what the notation means
       if (expression.dice.length > 0) {
         text += '\n\nBreakdown:';
@@ -170,7 +244,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           const count = Math.abs(die.count);
           const sign = die.count < 0 ? '-' : '+';
           text += `\n• ${sign === '+' ? '' : sign}${count}d${die.size}`;
-          
+
           if (die.keep) {
             text += ` (keep ${die.keep.type === 'h' ? 'highest' : 'lowest'} ${die.keep.count})`;
           }
@@ -188,17 +262,33 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           }
         }
       }
-      
+
       if (expression.modifier !== 0) {
         text += `\n• Modifier: ${expression.modifier > 0 ? '+' : ''}${expression.modifier}`;
       }
 
+      const structuredContent: DiceValidationStructuredContent = {
+        notation,
+        valid: true,
+        expression,
+        breakdown,
+      };
+
       return {
         content: [{ type: 'text', text }],
+        structuredContent,
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown parsing error';
+      const structuredContent: DiceValidationStructuredContent = {
+        notation,
+        valid: false,
+        error: errorMessage,
+      };
+
       return {
-        content: [{ type: 'text', text: `❌ Invalid dice notation: ${notation}\n\nError: ${error instanceof Error ? error.message : 'Unknown parsing error'}` }],
+        content: [{ type: 'text', text: `❌ Invalid dice notation: ${notation}\n\nError: ${errorMessage}` }],
+        structuredContent,
       };
     }
   }

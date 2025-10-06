@@ -55,3 +55,55 @@ export interface DiceTerm {
   drop?: { type: 'h' | 'l'; count: number };
   success?: number; // success if >= value
 }
+
+// Structured content types for OpenAI Apps SDK integration
+export interface DiceRollStructuredContent {
+  notation: string;
+  label?: string;
+  total: number;
+  rolls: DieRoll[];
+  timestamp: string;
+  breakdown: string;
+  critical?: {
+    type: 'success' | 'fail';
+    naturalRoll: number;
+  };
+  modifier?: number;
+}
+
+export interface DiceValidationStructuredContent {
+  notation: string;
+  valid: boolean;
+  expression?: DiceExpression;
+  error?: string;
+  breakdown?: {
+    dice: Array<{
+      count: number;
+      size: number;
+      modifiers: string[];
+    }>;
+    modifier: number;
+  };
+}
+
+export interface SearchResultStructuredContent {
+  query: string;
+  results: Array<{
+    id: string;
+    title: string;
+    snippet: string;
+    relevance: number;
+  }>;
+  totalResults: number;
+}
+
+export interface FetchContentStructuredContent {
+  id: string;
+  title: string;
+  content: string;
+  metadata?: {
+    category?: string;
+    tags?: string[];
+    lastUpdated?: string;
+  };
+}
