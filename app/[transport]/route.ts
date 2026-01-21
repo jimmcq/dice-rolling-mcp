@@ -403,45 +403,9 @@ const handler = createMcpHandler(
   },
   {
     capabilities: {
-      tools: {
-        search: {
-          description:
-            'Search dice rolling documentation, guides, and examples',
-        },
-        fetch: {
-          description:
-            'Retrieve detailed content for a specific dice rolling topic by ID',
-        },
-        dice_roll: {
-          description:
-            "Roll dice using standard notation. IMPORTANT: For D&D advantage use '2d20kh1' (NOT '2d20')",
-        },
-        dice_validate: {
-          description: 'Validate and explain dice notation without rolling',
-        },
-      },
-      resources: {
-        'dice://guide/notation': {
-          name: 'Dice Notation Guide',
-          description:
-            'Comprehensive guide to dice notation including advantage, exploding dice, and complex mechanics',
-          mimeType: 'text/markdown',
-        },
-        'dice://guide/quick-reference': {
-          name: 'Quick Reference',
-          description:
-            'Quick reference for common dice patterns and D&D 5e notation',
-          mimeType: 'text/markdown',
-        },
-      },
-      prompts: {
-        help: {
-          description: 'Show dice notation help and common examples',
-        },
-        examples: {
-          description: 'Show common gaming examples (D&D, skill checks, etc.)',
-        },
-      },
+      tools: {},
+      resources: {},
+      prompts: {},
     },
   },
   {
