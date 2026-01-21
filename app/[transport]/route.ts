@@ -281,13 +281,16 @@ const handler = createMcpHandler(
     );
 
     // Add resources for documentation
-    server.resource('dice://guide/notation', async () => {
-      return {
-        contents: [
-          {
-            uri: 'dice://guide/notation',
-            mimeType: 'text/markdown',
-            text: `# Dice Notation Guide
+    server.resource(
+      'dice-notation-guide',
+      'dice://guide/notation',
+      async uri => {
+        return {
+          contents: [
+            {
+              uri: uri.href,
+              mimeType: 'text/markdown',
+              text: `# Dice Notation Guide
 
 ## Basic Format
 **XdY** - Roll X dice with Y sides
@@ -309,18 +312,22 @@ const handler = createMcpHandler(
 - \`1d%\` - Percentile (1-100)
 
 **Important**: For D&D 5e advantage, use \`2d20kh1\` NOT \`2d20\`!`,
-          },
-        ],
-      };
-    });
+            },
+          ],
+        };
+      }
+    );
 
-    server.resource('dice://guide/quick-reference', async () => {
-      return {
-        contents: [
-          {
-            uri: 'dice://guide/quick-reference',
-            mimeType: 'text/markdown',
-            text: `# Quick Reference
+    server.resource(
+      'dice-quick-reference',
+      'dice://guide/quick-reference',
+      async uri => {
+        return {
+          contents: [
+            {
+              uri: uri.href,
+              mimeType: 'text/markdown',
+              text: `# Quick Reference
 
 ## D&D 5e Essentials
 - \`2d20kh1\` - Advantage
@@ -333,10 +340,11 @@ const handler = createMcpHandler(
 - \`2d6+3\` - Damage with +3
 - \`1d4+1\` - Magic Missile
 - \`1d%\` - Percentile roll`,
-          },
-        ],
-      };
-    });
+            },
+          ],
+        };
+      }
+    );
 
     // Add prompts for help
     server.prompt('help', async () => ({
