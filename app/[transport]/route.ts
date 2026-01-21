@@ -281,16 +281,13 @@ const handler = createMcpHandler(
     );
 
     // Add resources for documentation
-    server.resource(
-      'dice-notation-guide',
-      'dice://guide/notation',
-      async uri => {
-        return {
-          contents: [
-            {
-              uri: uri.href,
-              mimeType: 'text/markdown',
-              text: `# Dice Notation Guide
+    server.resource('dice://guide/notation', async () => {
+      return {
+        contents: [
+          {
+            uri: 'dice://guide/notation',
+            mimeType: 'text/markdown',
+            text: `# Dice Notation Guide
 
 ## Basic Format
 **XdY** - Roll X dice with Y sides
@@ -312,22 +309,18 @@ const handler = createMcpHandler(
 - \`1d%\` - Percentile (1-100)
 
 **Important**: For D&D 5e advantage, use \`2d20kh1\` NOT \`2d20\`!`,
-            },
-          ],
-        };
-      }
-    );
+          },
+        ],
+      };
+    });
 
-    server.resource(
-      'dice-quick-reference',
-      'dice://guide/quick-reference',
-      async uri => {
-        return {
-          contents: [
-            {
-              uri: uri.href,
-              mimeType: 'text/markdown',
-              text: `# Quick Reference
+    server.resource('dice://guide/quick-reference', async () => {
+      return {
+        contents: [
+          {
+            uri: 'dice://guide/quick-reference',
+            mimeType: 'text/markdown',
+            text: `# Quick Reference
 
 ## D&D 5e Essentials
 - \`2d20kh1\` - Advantage
@@ -340,11 +333,10 @@ const handler = createMcpHandler(
 - \`2d6+3\` - Damage with +3
 - \`1d4+1\` - Magic Missile
 - \`1d%\` - Percentile roll`,
-            },
-          ],
-        };
-      }
-    );
+          },
+        ],
+      };
+    });
 
     // Add prompts for help
     server.prompt('help', async () => ({
@@ -403,9 +395,45 @@ const handler = createMcpHandler(
   },
   {
     capabilities: {
-      tools: {},
-      resources: {},
-      prompts: {},
+      tools: {
+        search: {
+          description:
+            'Search dice rolling documentation, guides, and examples',
+        },
+        fetch: {
+          description:
+            'Retrieve detailed content for a specific dice rolling topic by ID',
+        },
+        dice_roll: {
+          description:
+            "Roll dice using standard notation. IMPORTANT: For D&D advantage use '2d20kh1' (NOT '2d20')",
+        },
+        dice_validate: {
+          description: 'Validate and explain dice notation without rolling',
+        },
+      },
+      resources: {
+        'dice://guide/notation': {
+          name: 'Dice Notation Guide',
+          description:
+            'Comprehensive guide to dice notation including advantage, exploding dice, and complex mechanics',
+          mimeType: 'text/markdown',
+        },
+        'dice://guide/quick-reference': {
+          name: 'Quick Reference',
+          description:
+            'Quick reference for common dice patterns and D&D 5e notation',
+          mimeType: 'text/markdown',
+        },
+      },
+      prompts: {
+        help: {
+          description: 'Show dice notation help and common examples',
+        },
+        examples: {
+          description: 'Show common gaming examples (D&D, skill checks, etc.)',
+        },
+      },
     },
   },
   {
