@@ -3201,9 +3201,9 @@ math-intrinsics@^1.1.0:
   integrity sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==
 
 mcp-handler@^1.0.0:
-  version "1.0.7"
-  resolved "https://registry.npmjs.org/mcp-handler/-/mcp-handler-1.0.7.tgz"
-  integrity sha512-w2wHb6IVmbiS+pnBNb5BXaSd+ynSgExNauB55gUwoHDw8Q8Ew9TVMsSX89yItmex61zQTl+/NuSYmlOgSpj8SQ==
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/mcp-handler/-/mcp-handler-1.1.0.tgz#7740052781d1d04929db92d129f2c1bb6f3f351a"
+  integrity sha512-MVCES7g18gcoZy+R/3v5nadkUMzMAWdos8jRl6DyljOKvd2/ZKDmwlCjL6zp4vo+7FeCXOYL1uWinHWlkKAAUg==
   dependencies:
     chalk "^5.3.0"
     commander "^11.1.0"
