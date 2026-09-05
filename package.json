@@ -18,7 +18,7 @@
     "format:check": "prettier --check src/**/*.ts __tests__/**/*.ts app/**/*.ts",
     "prepare": "husky",
     "pre-commit": "lint-staged",
-    "build:mcp": "tsc",
+    "build:mcp": "tsc && node scripts/copy-docs.mjs",
     "start:mcp": "node dist/index.js",
     "dev:mcp": "tsx watch src/index.ts"
   },
