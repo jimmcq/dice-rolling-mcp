@@ -1,6 +1,10 @@
 import { DiceExpression, RollResult, DieRoll } from '../types.js';
 import { randomInt } from 'crypto';
 
+// A long explosion chain grows the roll list without bound, so cap it. At the
+// smallest explodable die (d2) reaching this cap has probability 2^-100.
+const MAX_EXPLOSION_CHAIN = 100;
+
 export class DiceRoller {
   roll(notation: string, expression: DiceExpression): RollResult {
     let total = expression.modifier;
@@ -21,6 +25,9 @@ export class DiceRoller {
           roll = randomInt(1, term.size + 1);
         }
         const die: DieRoll = { size: term.size, result: roll };
+        if (term.fudge) {
+          die.fudge = true;
+        }
 
         // Reroll mechanic: if the die shows a value in the reroll list, reroll it once
         if (term.reroll && term.reroll.includes(roll)) {
@@ -31,8 +38,13 @@ export class DiceRoller {
 
         termRolls.push(die);
 
-        if (term.explode && roll === term.size) {
+        // A die with a single face can never roll below its maximum, so the
+        // loop below would never terminate. Fudge dice are internally d1, which
+        // makes "4dF!" hang; a literal "3d1!" hangs for the same reason.
+        const canExplode = !term.fudge && term.size > 1;
+        if (term.explode && canExplode && roll === term.size) {
           let explodedRoll;
+          let chain = 0;
           do {
             explodedRoll = randomInt(1, term.size + 1);
             termRolls.push({
@@ -40,7 +52,8 @@ export class DiceRoller {
               result: explodedRoll,
               exploded: true,
             });
-          } while (explodedRoll === term.size);
+            chain++;
+          } while (explodedRoll === term.size && chain < MAX_EXPLOSION_CHAIN);
         }
       }
 
@@ -117,7 +130,7 @@ export class DiceRoller {
       }
 
       if (breakdown) breakdown += isNegative ? ' - ' : ' + ';
-      breakdown += `${count}d${term.size}:[${termBreakdown.join(',')}]`;
+      breakdown += `${count}d${term.fudge ? 'F' : term.size}:[${termBreakdown.join(',')}]`;
       if (term.success) {
         breakdown += ` successes: ${termTotal}`;
       }
