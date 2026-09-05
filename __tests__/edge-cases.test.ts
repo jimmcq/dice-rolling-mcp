@@ -104,6 +104,37 @@ describe('Edge Cases and Error Handling', () => {
       expect(result.rolls.length).toBeLessThan(50); // Safety check
     });
 
+    test('should not hang on exploding fudge dice', () => {
+      const expression = parser.parse('4dF!');
+      const result = roller.roll('4dF!', expression);
+
+      // Fudge dice are internally d1, so an unguarded explosion loop never
+      // terminates. Exactly four dice means nothing exploded.
+      expect(result.rolls).toHaveLength(4);
+      result.rolls.forEach(roll => {
+        expect([-1, 0, 1]).toContain(roll.result);
+      });
+    });
+
+    test('should not hang on exploding single-faced dice', () => {
+      const expression = parser.parse('3d1!');
+      const result = roller.roll('3d1!', expression);
+
+      expect(result.rolls).toHaveLength(3);
+      expect(result.total).toBe(3);
+    });
+
+    test('should label fudge dice as dF in the breakdown', () => {
+      const expression = parser.parse('4dF');
+      const result = roller.roll('4dF', expression);
+
+      expect(result.breakdown).toContain('4dF:[');
+      expect(result.breakdown).not.toContain('4d1:[');
+      result.rolls.forEach(roll => {
+        expect(roll.fudge).toBe(true);
+      });
+    });
+
     test('should handle reroll with some dice needing reroll', () => {
       const expression = parser.parse('3d6r1');
       const result = roller.roll('3d6r1', expression);

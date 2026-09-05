@@ -16,6 +16,7 @@ export interface DieRoll {
   dropped?: boolean;
   exploded?: boolean;
   rerolled?: boolean;
+  fudge?: boolean;
 }
 
 export interface Statistics {
