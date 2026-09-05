@@ -20,6 +20,8 @@ import {
   FetchContentStructuredContent
 } from './types.js';
 import { z } from 'zod';
+import { fileURLToPath } from 'url';
+import { resolve as resolvePath } from 'path';
 
 const diceRollInputSchema = z.object({
   notation: z.string().describe('e.g., "3d6+2"'),
@@ -338,7 +340,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   if (uri === 'dice://guide/notation') {
     const fs = await import('fs/promises');
     const path = await import('path');
-    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const content = await fs.readFile(
       path.join(__dirname, 'documentation', 'dice-notation-guide.md'), 
       'utf-8'
@@ -355,7 +357,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   if (uri === 'dice://guide/quick-reference') {
     const fs = await import('fs/promises');
     const path = await import('path');
-    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const content = await fs.readFile(
       path.join(__dirname, 'documentation', 'quick-reference.md'), 
       'utf-8'
@@ -488,7 +490,7 @@ Remember: Advantage means you get the BETTER result, not the SUM of both dice!`,
 });
 
 // Start the server if this file is run directly (local development)
-if (process.argv[1] === new URL(import.meta.url).pathname) {
+if (process.argv[1] && resolvePath(process.argv[1]) === fileURLToPath(import.meta.url)) {
   // Use stderr for logging to avoid interfering with JSON-RPC communication on stdout
   console.error('Dice Rolling MCP Server starting locally...');
   const transport = new StdioServerTransport();
